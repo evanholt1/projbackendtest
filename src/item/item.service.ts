@@ -10,22 +10,22 @@ export class ItemService {
   constructor(
     @InjectModel(Item.name) private itemModel: mongoose.Model<ItemDocument>,
   ) {}
-  create(createItemDto: CreateItemDto) {
+  create(createItemDto: CreateItemDto): Promise<Item> {
     return this.itemModel.create(createItemDto);
   }
 
-  findAll() {
+  findAll(): Promise<Item[]> {
     return this.itemModel.find().exec();
   }
 
-  findOne(id: string) {
+  findOne(id: string): Promise<Item> {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
     return this.itemModel.findById(id).exec();
   }
 
-  async update(id: string, updateItemDto: UpdateItemDto) {
+  async update(id: string, updateItemDto: UpdateItemDto): Promise<Item> {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 

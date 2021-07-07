@@ -1,5 +1,5 @@
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import * as mongoose from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 import { Store } from 'src/store/schemas/store.schema';
@@ -8,6 +8,7 @@ export type ItemDocument = Item & mongoose.Document;
 
 @Schema()
 export class Item {
+  @ApiProperty()
   @Prop()
   name_en: string;
 
@@ -29,10 +30,10 @@ export class Item {
   @Prop()
   image_url: string;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Store'})
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Store' })
   store: Store;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Category'})
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
   category: Category;
 }
 

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'src/category/schemas/category.schema';
 import { Store } from 'src/store/schemas/store.schema';
 
