@@ -8,6 +8,9 @@ export type ItemDocument = Item & mongoose.Document;
 
 @Schema()
 export class Item {
+  @Prop()
+  _id: mongoose.Types.ObjectId;
+
   @ApiProperty()
   @Prop()
   name_en: string;

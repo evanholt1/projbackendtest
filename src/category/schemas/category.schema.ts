@@ -7,6 +7,9 @@ export type CategoryDocument = Category & mongoose.Document;
 @Schema()
 export class Category {
   @Prop()
+  _id: mongoose.Types.ObjectId;
+
+  @Prop()
   name_en: string;
 
   @Prop()

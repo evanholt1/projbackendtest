@@ -15,7 +15,7 @@ export class ItemService {
   }
 
   findAll(): Promise<Item[]> {
-    return this.itemModel.find().exec();
+    return this.itemModel.find().populate('store').exec();
   }
 
   findOne(id: string): Promise<Item> {
