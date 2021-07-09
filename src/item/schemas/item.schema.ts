@@ -1,15 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
+//import * as mongoose from 'mongoose';
+import { Schema as schema, Document } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
 import { Store } from 'src/store/schemas/store.schema';
+import { AddonCategory } from './addonCategory.schema';
 
-export type ItemDocument = Item & mongoose.Document;
+export type ItemDocument = Item & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Item {
-  @Prop()
-  _id: mongoose.Types.ObjectId;
+  @ApiProperty({ type: String })
+  _id: schema.Types.ObjectId;
 
   @ApiProperty()
   @Prop()
@@ -33,11 +35,16 @@ export class Item {
   @Prop()
   image_url: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Store' })
+  @ApiProperty({ type: String })
+  @Prop({ type: schema.Types.ObjectId, ref: 'Store' })
   store: Store;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
+  @ApiProperty({ type: String })
+  @Prop({ type: schema.Types.ObjectId, ref: 'Category' })
   category: Category;
+
+  @Prop([AddonCategory])
+  addonsByCat: AddonCategory[];
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

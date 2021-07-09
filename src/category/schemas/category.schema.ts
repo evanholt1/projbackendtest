@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import * as mongoose from 'mongoose';
 import { Item } from 'src/item/schemas/item.schema';
 
 export type CategoryDocument = Category & mongoose.Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Category {
-  @Prop()
-  _id: mongoose.Types.ObjectId;
+  @ApiProperty({ type: String })
+  _id: mongoose.Schema.Types.ObjectId;
 
   @Prop()
   name_en: string;
