@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ApiProperty } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  @Prop()
+  @ApiProperty({ type: String })
   _id: Types.ObjectId;
 
   @Prop()
@@ -13,6 +14,9 @@ export class User {
 
   @Prop()
   phone_number: string;
+
+  @Prop({ enum: ['user', 'driver', 'restaurant', 'admin'] })
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

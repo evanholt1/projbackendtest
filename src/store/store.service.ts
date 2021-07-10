@@ -22,7 +22,7 @@ export class StoreService {
     return this.storeModel.create(createStoreDto);
   }
 
-  findAll(): Promise<Store[]> {
+  findAll(req: any): Promise<Store[]> {
     return this.storeModel.find().exec();
   }
 

@@ -28,6 +28,10 @@ export class UserService {
     return this.userModel.findById(id).exec();
   }
 
+  findOneByPhoneNumber(phoneNumber: string): Promise<User> {
+    return this.userModel.findOne({ phone_number: phoneNumber }).exec();
+  }
+
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
