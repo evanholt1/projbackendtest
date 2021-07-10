@@ -2,6 +2,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { logToConsole } from 'src/utils/helpers/consolelogger';
+import { User } from 'src/user/entities/user.entity';
 
 //
 // note that after validation, a new req.user field will be added.
@@ -19,7 +21,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    console.log(`payload \n${JSON.stringify(payload)}\n`);
-    return { userId: payload.sub, userRole: payload.role };
+    return new User(payload.sub, payload.role);
   }
 }

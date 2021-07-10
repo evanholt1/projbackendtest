@@ -13,9 +13,11 @@ import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/utils/enums/role.enum';
 
 @Controller('store')
 export class StoreController {
@@ -24,33 +26,43 @@ export class StoreController {
     private readonly authService: AuthService,
   ) {}
 
+  @Roles(Role.All)
+  @ApiBearerAuth()
   @Post()
   create(@Body() createStoreDto: CreateStoreDto) {
     return this.storeService.create(createStoreDto);
   }
 
-  @UseGuards(JwtAuthGuard, new RolesGuard({ allowAll: true }))
+  @Roles(Role.All)
   @ApiBearerAuth()
   @Get()
   findAll(@Request() req) {
     return this.storeService.findAll(req);
   }
 
+  @Roles(Role.All)
+  @ApiBearerAuth()
   @Get(':id/items')
   findAllItems(@Param('id') id: string) {
     return this.storeService.findAllItems(id);
   }
 
+  @Roles(Role.All)
+  @ApiBearerAuth()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.storeService.findOne(id);
   }
 
+  @Roles(Role.All)
+  @ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
     return this.storeService.update(id, updateStoreDto);
   }
 
+  @Roles(Role.All)
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.storeService.remove(id);

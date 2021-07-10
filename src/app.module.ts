@@ -7,6 +7,9 @@ import { StoreModule } from './store/store.module';
 import { UserModule } from './user/user.module';
 import { OrderModule } from './order/order.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -24,10 +27,20 @@ import { AuthModule } from './auth/auth.module';
     CategoryModule,
     ItemModule,
     UserModule,
-    OrderModule,
+    //OrderModule,
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      // note this in documentation may need to be defined in Auth module instead.
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

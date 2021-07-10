@@ -1,4 +1,5 @@
 import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Public } from 'src/utils/decorators/public-route.decorator';
 import { AuthService } from './auth.service';
 import { SignUpUserDto } from './dto/user-signup.dto';
 
@@ -6,36 +7,9 @@ import { SignUpUserDto } from './dto/user-signup.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('/signup')
   signUp(@Body() signUpUserDto: SignUpUserDto) {
     return this.authService.signUpUser(signUpUserDto);
   }
-  // @Post('/authenticate')
-  // authenticate(@Hea() req) {
-  //   return this.authService.authenticate();
-  // }
-  // @Post()
-  // create(@Body() createAuthDto: CreateAuthDto) {
-  //   return this.authService.create(createAuthDto);
-  // }
-
-  // @Get()
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.authService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  //   return this.authService.update(+id, updateAuthDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.authService.remove(+id);
-  // }
 }
