@@ -10,6 +10,9 @@ export class User {
   _id: Types.ObjectId;
 
   @Prop()
+  uuid: string;
+
+  @Prop()
   name: string;
 
   @Prop()
