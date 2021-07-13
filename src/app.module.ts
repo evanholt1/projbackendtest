@@ -27,7 +27,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
     CategoryModule,
     ItemModule,
     UserModule,
-    //OrderModule,
+    OrderModule,
     AuthModule,
   ],
   controllers: [],
