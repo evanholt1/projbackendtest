@@ -10,6 +10,16 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Store.name, schema: StoreSchema }]),
+    // MongooseModule.forFeatureAsync([
+    //   {
+    //     name: Store.name,
+    //     useFactory: () => {
+    //       const schema = StoreSchema;
+    //       schema.plugin(require('mongoose-paginate-v2'));
+    //       return schema;
+    //     },
+    //   },
+    // ]),
     ItemModule,
     AuthModule,
   ],

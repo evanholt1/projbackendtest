@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { truncate } from 'fs';
 import { Document, Types } from 'mongoose';
 
 export type UserDocument = User & Document;
@@ -9,7 +10,7 @@ export class User {
   @ApiProperty({ type: String })
   _id: Types.ObjectId;
 
-  @Prop()
+  @Prop({ unique: true })
   uuid: string;
 
   @Prop()

@@ -20,7 +20,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Public()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -28,28 +28,28 @@ export class UserController {
 
   //@Roles(Role.Admin)
   @Public()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
   @Public()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
 
   @Public()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Public()
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);

@@ -1,10 +1,16 @@
 export class CreateUserDto {
-  constructor(name: string, phone_number: string) {
+  constructor(name: string, uuid: string, role: string) {
     this.name = name;
-    this.phone_number = phone_number;
+    this.uuid = uuid;
+    //this.phone_number = phone_number;
+    this.role = role;
   }
 
   name: string;
 
-  phone_number: string;
+  uuid: string;
+
+  //phone_number: string;
+
+  role: string;
 }

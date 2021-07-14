@@ -19,7 +19,9 @@ export class CategoryService {
   }
 
   findAll() {
-    return this.categoryModel.find().exec();
+    //return this.categoryModel.find().exec();
+    //@ts-ignore
+    return this.categoryModel.paginate();
   }
 
   findOne(id: string) {
@@ -33,10 +35,11 @@ export class CategoryService {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
-    //let nid = new mongoose.Types.ObjectId(id);
-    return this.ItemModel.find({
-      category: id,
-    } as mongoose.FilterQuery<Item>).exec();
+    //@ts-ignore
+    return this.ItemModel.paginate({ category: id });
+    // return this.ItemModel.find({
+    //   category: id,
+    // } as mongoose.FilterQuery<Item>).exec();
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {

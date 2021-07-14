@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { FilterQuery } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
+import { Public } from 'src/utils/decorators/public-route.decorator';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
@@ -23,7 +24,11 @@ export class StoreService {
   }
 
   findAll(req: any): Promise<Store[]> {
-    return this.storeModel.find().exec();
+    //return this.storeModel.find().exec();
+    //@ts-ignore
+    //console.log(this.storeModel.paginate());
+    //@ts-ignore
+    return this.storeModel.paginate();
   }
 
   findAllItems(storeId: string): Promise<Item[]> {

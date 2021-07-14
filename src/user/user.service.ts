@@ -28,8 +28,8 @@ export class UserService {
     return this.userModel.findById(id).exec();
   }
 
-  findOneByPhoneNumber(phoneNumber: string): Promise<User> {
-    return this.userModel.findOne({ phone_number: phoneNumber }).exec();
+  findOneByUUID(uuid: string): Promise<User> {
+    return this.userModel.findOne({ uuid: uuid }).exec();
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
