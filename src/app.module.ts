@@ -6,10 +6,9 @@ import { ItemModule } from './item/item.module';
 import { StoreModule } from './store/store.module';
 import { UserModule } from './user/user.module';
 import { OrderModule } from './order/order.module';
-import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
-import { RolesGuard } from './auth/guards/roles.guard';
+import { JwtAuthGuard } from './user/guards/jwt-auth.guard';
+import { RolesGuard } from './user/guards/roles.guard';
 import { Connection } from 'mongoose';
 
 @Module({
@@ -37,7 +36,7 @@ import { Connection } from 'mongoose';
     ItemModule,
     UserModule,
     OrderModule,
-    AuthModule,
+    // AuthModule,
   ],
   controllers: [],
   providers: [

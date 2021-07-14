@@ -13,11 +13,17 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/user/decorators/roles.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Public()
+  @Post('/signup')
+  signUp(@Body() createUserDto: CreateUserDto) {
+    return this.userService.signUpUser(createUserDto);
+  }
 
   @Public()
   //@ApiBearerAuth()

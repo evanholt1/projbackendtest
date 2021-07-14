@@ -1,7 +1,6 @@
 export class SignUpUserDto {
   name: string;
-
-  //phoneNumber: string;
-
+  phone_number: string;
+  email: string;
   uuid: string;
 }

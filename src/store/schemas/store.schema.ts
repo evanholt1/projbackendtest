@@ -7,7 +7,6 @@ export type StoreDocument = Store & Document;
 @Schema({ timestamps: true })
 export class Store {
   @ApiProperty({ type: Types.ObjectId })
-  @Prop()
   _id: Types.ObjectId;
 
   @Prop()

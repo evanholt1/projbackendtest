@@ -19,6 +19,9 @@ export class User {
   @Prop()
   phone_number: string;
 
+  @Prop()
+  email: string;
+
   @Prop({ enum: ['user', 'driver', 'restaurant', 'admin'] })
   role: string;
 }

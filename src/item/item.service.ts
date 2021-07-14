@@ -15,7 +15,9 @@ export class ItemService {
   }
 
   findAll(): Promise<Item[]> {
-    return this.itemModel.find().populate('store').exec();
+    //return this.itemModel.find().populate('store').exec();
+    //@ts-ignore
+    return this.itemModel.paginate({}, { populate: 'store' });
   }
 
   findOne(id: string): Promise<Item> {

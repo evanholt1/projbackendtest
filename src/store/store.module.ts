@@ -5,7 +5,7 @@ import { Store, StoreSchema } from './schemas/store.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Item, ItemSchema } from 'src/item/schemas/item.schema';
 import { ItemModule } from 'src/item/item.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { AuthModule } from 'src/auth/auth.module';
     //   },
     // ]),
     ItemModule,
-    AuthModule,
+    UserModule,
   ],
   controllers: [StoreController],
   providers: [StoreService],

@@ -17,7 +17,9 @@ export class OrderService {
   }
 
   findAll() {
-    return this.orderModel.find().exec();
+    //return this.orderModel.find().exec();
+    //@ts-ignore
+    return this.orderModel.paginate();
   }
 
   findOne(id: string) {

@@ -26,15 +26,15 @@ export class StoreService {
   findAll(req: any): Promise<Store[]> {
     //return this.storeModel.find().exec();
     //@ts-ignore
-    //console.log(this.storeModel.paginate());
-    //@ts-ignore
     return this.storeModel.paginate();
   }
 
   findAllItems(storeId: string): Promise<Item[]> {
-    return this.ItemModel.find({
-      store: storeId,
-    } as FilterQuery<Item>).exec(); // for relation "no overload" error
+    //@ts-ignore
+    return this.ItemModel.paginate({ store: storeId });
+    // return this.ItemModel.find({
+    //   store: storeId,
+    // } as FilterQuery<Item>).exec(); // for relation "no overload" error
   }
 
   findOne(id: string): Promise<Store> {
@@ -47,8 +47,10 @@ export class StoreService {
   async update(id: string, updateStoreDto: UpdateStoreDto): Promise<Store> {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
-
-    const store = await this.storeModel.findById(id).exec();
+    console.log('id ' + id);
+    const store = await this.storeModel.findOne({ _id: id }).exec();
+    //const store = await this.storeModel.findById(id).exec();
+    console.log('stores ' + (await this.storeModel.find().exec()));
     store.set(updateStoreDto);
     return store.save();
   }

@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { Role } from 'src/utils/enums/role.enum';
+import { Roles } from './decorators/roles.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
@@ -9,16 +12,33 @@ import { User, UserDocument } from './schemas/user.schema';
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: mongoose.Model<UserDocument>,
+    private jwtService: JwtService,
   ) {}
 
+  async signUpUser(signUpUserDto: CreateUserDto) {
+    let user: User;
+    user = await this.findOneByUUID(signUpUserDto.uuid);
+
+    if (!user) {
+      signUpUserDto.role = Role.User;
+      user = await this.create(signUpUserDto);
+    }
+    const payload = { sub: user._id, role: user.role }; // "sub" due to jwt standard name
+    const jwt = await this.jwtService.signAsync(payload);
+    return {
+      token: jwt,
+      userId: user._id,
+    };
+  }
+
   create(createUserDto: CreateUserDto): Promise<User> {
-    // const createdCat = new this.userModel(createUserDto);
-    // return createdCat.save(createUserDto);
     return this.userModel.create(createUserDto);
   }
 
   findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    //@ts-ignore
+    return this.userModel.paginate();
+    //return this.userModel.find().exec();
   }
 
   findOne(id: string): Promise<User> {

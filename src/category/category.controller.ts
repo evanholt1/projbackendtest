@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { CategoryService } from './category.service';

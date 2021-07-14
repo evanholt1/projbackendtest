@@ -11,7 +11,7 @@ import { ItemService } from './item.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './schemas/item.schema';
-import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/user/decorators/roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Role } from 'src/utils/enums/role.enum';
 import { Public } from 'src/utils/decorators/public-route.decorator';
