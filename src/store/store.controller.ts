@@ -41,15 +41,17 @@ export class StoreController {
     return this.storeService.findAll(req);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get(':id/items')
   findAllItems(@Param('id') id: string) {
     return this.storeService.findAllItems(id);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.storeService.findOne(id);

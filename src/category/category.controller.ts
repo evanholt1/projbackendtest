@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -18,29 +19,33 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get()
   findAll() {
     return this.categoryService.findAll();
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.categoryService.findOne(id);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get(':id/items')
   findOneCatItems(@Param('id') id: string) {
     return this.categoryService.findOneCatItems(id);

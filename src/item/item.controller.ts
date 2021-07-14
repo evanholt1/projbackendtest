@@ -14,27 +14,31 @@ import { Item } from './schemas/item.schema';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Role } from 'src/utils/enums/role.enum';
+import { Public } from 'src/utils/decorators/public-route.decorator';
 
 @Controller('item')
 export class ItemController {
   constructor(private readonly itemService: ItemService) {}
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Post()
   create(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return this.itemService.create(createItemDto);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get()
   findAll(): Promise<Item[]> {
     return this.itemService.findAll();
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Item> {
     return this.itemService.findOne(id);
