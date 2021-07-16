@@ -7,18 +7,22 @@ import {
   Param,
   Delete,
   Request,
+  Query,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RolesGuard } from 'src/user/guards/roles.guard';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { Public } from 'src/utils/decorators/public-route.decorator';
+import { Store, StoreDocument } from './schemas/store.schema';
+import { StoreQueryFiltersDto } from './dto/store-query-filters.dto';
 
 @Controller('store')
+@ApiTags('Store')
 export class StoreController {
   constructor(private readonly storeService: StoreService) {}
 
@@ -32,8 +36,8 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @Get()
-  findAll(@Request() req) {
-    return this.storeService.findAll(req);
+  findAll(@Query() queryFilters: StoreQueryFiltersDto) {
+    return this.storeService.findAll(queryFilters);
   }
 
   // @Roles(Role.All)

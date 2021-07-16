@@ -5,6 +5,7 @@ import { FilterQuery } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { CreateStoreDto } from './dto/create-store.dto';
+import { StoreQueryFiltersDto } from './dto/store-query-filters.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
 
@@ -20,13 +21,12 @@ export class StoreService {
   create(createStoreDto: CreateStoreDto): Promise<Store> {
     // const createdCat = new this.storeModel(createStoreDto);
     // return createdCat.save(createStoreDto);
-    return this.storeModel.create(createStoreDto);
+    return this.storeModel.create({ ...createStoreDto, rating: 0.0 });
   }
 
-  findAll(req: any): Promise<Store[]> {
-    //return this.storeModel.find().exec();
+  findAll(queryFilters: StoreQueryFiltersDto): Promise<Store[]> {
     //@ts-ignore
-    return this.storeModel.paginate();
+    return this.storeModel.paginate(queryFilters);
   }
 
   findAllItems(storeId: string): Promise<Item[]> {

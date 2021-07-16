@@ -11,11 +11,12 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './schemas/order.schema';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 
 @Controller('order')
+@ApiTags('Order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 

@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
@@ -16,6 +16,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('category')
+@ApiTags('Category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

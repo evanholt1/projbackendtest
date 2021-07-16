@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiQuery } from '@nestjs/swagger';
 import { truncate } from 'fs';
 import { Document, Types } from 'mongoose';
+import { Role } from 'src/utils/enums/role.enum';
 
 export type UserDocument = User & Document;
 
@@ -22,7 +23,7 @@ export class User {
   @Prop()
   email: string;
 
-  @Prop({ enum: ['user', 'driver', 'restaurant', 'admin'] })
+  @Prop({ enum: Role })
   role: string;
 }
 

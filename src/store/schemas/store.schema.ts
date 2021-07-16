@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiQuery } from '@nestjs/swagger';
 import { Document, Types } from 'mongoose';
 
 export type StoreDocument = Store & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, strictQuery: true })
 export class Store {
-  @ApiProperty({ type: Types.ObjectId })
-  _id: Types.ObjectId;
+  @ApiProperty({ type: String })
+  _id: string;
 
   @Prop()
   name_en: string;
@@ -20,9 +20,6 @@ export class Store {
 
   @Prop()
   rating: number;
-
-  @Prop()
-  available_quantity: number;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);
