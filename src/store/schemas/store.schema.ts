@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty, ApiQuery } from '@nestjs/swagger';
-import { Document, Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { Document } from 'mongoose';
+import { Point } from 'src/utils/schemas/point.schema';
 
 export type StoreDocument = Store & Document;
 
@@ -20,6 +21,9 @@ export class Store {
 
   @Prop()
   rating: number;
+
+  @Prop()
+  location: Point;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);

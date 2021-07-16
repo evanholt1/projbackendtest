@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { FilterQuery } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
+import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { StoreQueryFiltersDto } from './dto/store-query-filters.dto';
@@ -18,13 +19,20 @@ export class StoreService {
     private readonly ItemModel: mongoose.Model<ItemDocument>,
   ) {}
 
-  create(createStoreDto: CreateStoreDto): Promise<Store> {
+  async create(createStoreDto: CreateStoreDto): Promise<Store> {
     // const createdCat = new this.storeModel(createStoreDto);
     // return createdCat.save(createStoreDto);
-    return this.storeModel.create({ ...createStoreDto, rating: 0.0 });
+    console.log(createStoreDto.location);
+    const store = await this.storeModel.create({
+      ...createStoreDto,
+      rating: 0.0,
+    });
+    console.log(store);
+    return store;
   }
 
   findAll(queryFilters: StoreQueryFiltersDto): Promise<Store[]> {
+    //const options: PaginateOptions = new PaginateOptions({limit: queryFilters.paginationOptions.});
     //@ts-ignore
     return this.storeModel.paginate(queryFilters);
   }

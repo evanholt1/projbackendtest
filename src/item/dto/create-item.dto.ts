@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Category } from 'src/category/schemas/category.schema';
 import { Store } from 'src/store/schemas/store.schema';
+import { AddonCategory } from '../schemas/addonCategory.schema';
 
 export class CreateItemDto {
   name_en: string;
@@ -17,7 +18,9 @@ export class CreateItemDto {
 
   image_url: string;
 
-  store: Store;
+  store: string;
 
-  category: Category;
+  category: string;
+
+  addonsByCat: AddonCategory[];
 }

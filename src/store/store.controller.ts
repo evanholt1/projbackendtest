@@ -65,4 +65,13 @@ export class StoreController {
   remove(@Param('id') id: string) {
     return this.storeService.remove(id);
   }
+
+  // @Post('test')
+  // testPost(
+  //   @Body() body: StoreQueryFiltersDto,
+  //   @Query() query: StoreQueryFiltersDto,
+  // ) {
+  //   // dummy route just to use Order class as to generate it in swagger.
+  //   return 'null';
+  // }
 }
