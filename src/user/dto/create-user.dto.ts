@@ -42,5 +42,4 @@ export class CreateUserDto {
   email: string;
   login_type: string;
   avatar_url: string;
-  role?: string;
 }

@@ -20,7 +20,7 @@ export class UserService {
     user = await this.findOneByUUID(signUpUserDto.uuid);
 
     if (!user) {
-      signUpUserDto.role = Role.User;
+      //signUpUserDto.role = Role.User;
       user = await this.create(signUpUserDto);
     }
     const payload = { sub: user._id, role: user.role }; // "sub" due to jwt standard name
@@ -32,7 +32,7 @@ export class UserService {
   }
 
   create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userModel.create(createUserDto);
+    return this.userModel.create({ ...createUserDto, role: Role.User });
   }
 
   findAll(): Promise<User[]> {
