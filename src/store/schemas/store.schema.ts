@@ -24,6 +24,9 @@ export class Store {
 
   @Prop()
   location: Point;
+
+  @Prop({ enum: ['Restaurant', 'Supermarket'] })
+  type: string;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);

@@ -1,12 +1,11 @@
 import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { FilterQuery } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
 import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
-import { Public } from 'src/utils/decorators/public-route.decorator';
+import { Language } from 'src/utils/enums/languages.enum';
 import { CreateStoreDto } from './dto/create-store.dto';
-import { StoreQueryFiltersDto } from './dto/store-query-filters.dto';
+import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
 
@@ -31,10 +30,13 @@ export class StoreService {
     return store;
   }
 
-  findAll(queryFilters: StoreQueryFiltersDto): Promise<Store[]> {
-    //const options: PaginateOptions = new PaginateOptions({limit: queryFilters.paginationOptions.});
+  findAll(storeQueryOptions: StoreQueryOptions): Promise<Store[]> {
+    let options = { ...storeQueryOptions.paginationOptions };
+    this.keepOnlyLocaleSpecificFields(storeQueryOptions.language, options);
+    this.addLeanOption(options);
+
     //@ts-ignore
-    return this.storeModel.paginate(queryFilters);
+    return this.storeModel.paginate(storeQueryOptions, options);
   }
 
   findAllItems(storeId: string): Promise<Item[]> {
@@ -68,5 +70,15 @@ export class StoreService {
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
     return this.storeModel.deleteOne({ _id: id }).exec();
+  }
+
+  private keepOnlyLocaleSpecificFields(lang: Language, options: Object) {
+    if ((lang as Language) === (Language.en as Language))
+      Object.assign(options, { select: '-name_ar' });
+    else Object.assign(options, { select: '-name_en' });
+  }
+
+  private addLeanOption(options: Object) {
+    Object.assign(options, { lean: true });
   }
 }

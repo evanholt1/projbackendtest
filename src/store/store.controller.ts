@@ -7,6 +7,10 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -15,7 +19,9 @@ import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { Public } from 'src/utils/decorators/public-route.decorator';
-import { StoreQueryFiltersDto } from './dto/store-query-filters.dto';
+import { StoreQueryOptions } from './dto/store-query-options.dto';
+import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
+import { PaginationOptions } from 'src/utils/decorators/pagination-options.decorator';
 
 @Controller('store')
 @ApiTags('Store')
@@ -32,8 +38,10 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @Get()
-  findAll(@Query() queryFilters: StoreQueryFiltersDto) {
-    return this.storeService.findAll(queryFilters);
+  //@UsePipes(new ValidationPipe({ transform: true }))
+  @PaginationOptions('paginationOptions', PaginateOptions)
+  findAll(@Query() storeQueryOptions: StoreQueryOptions) {
+    return this.storeService.findAll(storeQueryOptions);
   }
 
   // @Roles(Role.All)
