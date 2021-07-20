@@ -1,3 +1,4 @@
+import { StoreType } from 'src/utils/enums/store-type.enum';
 import { Point } from 'src/utils/schemas/point.schema';
 
 export class CreateStoreDto {
@@ -8,4 +9,6 @@ export class CreateStoreDto {
   image_url: string;
 
   location: Point;
+
+  type: StoreType;
 }

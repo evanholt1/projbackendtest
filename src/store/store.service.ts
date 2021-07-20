@@ -1,21 +1,21 @@
 import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
+import { Model, isValidObjectId } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
-import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
 import { Language } from 'src/utils/enums/languages.enum';
+import { addLeanOption } from 'src/utils/helpers/mongoose/add-lean-option';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
-
+import { setFieldToSortBy } from 'src/utils/helpers/mongoose/set-field-to-sort-by.helper';
 @Injectable()
 export class StoreService {
   constructor(
     @InjectModel(Store.name)
-    private readonly storeModel: mongoose.Model<StoreDocument>,
+    private readonly storeModel: Model<StoreDocument>,
     @InjectModel(Item.name)
-    private readonly ItemModel: mongoose.Model<ItemDocument>,
+    private readonly ItemModel: Model<ItemDocument>,
   ) {}
 
   async create(createStoreDto: CreateStoreDto): Promise<Store> {
@@ -26,15 +26,15 @@ export class StoreService {
       ...createStoreDto,
       rating: 0.0,
     });
-    console.log(store);
     return store;
   }
 
   findAll(storeQueryOptions: StoreQueryOptions): Promise<Store[]> {
     let options = { ...storeQueryOptions.paginationOptions };
-    this.keepOnlyLocaleSpecificFields(storeQueryOptions.language, options);
-    this.addLeanOption(options);
-
+    this.keepOnlyLocaleSpecificFields(options, storeQueryOptions.language);
+    addLeanOption(options);
+    if (storeQueryOptions.sortField)
+      setFieldToSortBy(options, storeQueryOptions.sortField);
     //@ts-ignore
     return this.storeModel.paginate(storeQueryOptions, options);
   }
@@ -48,14 +48,14 @@ export class StoreService {
   }
 
   findOne(id: string): Promise<Store> {
-    if (!mongoose.isValidObjectId(id))
+    if (!isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
     return this.storeModel.findById(id).exec();
   }
 
   async update(id: string, updateStoreDto: UpdateStoreDto): Promise<Store> {
-    if (!mongoose.isValidObjectId(id))
+    if (!isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
     console.log('id ' + id);
     const store = await this.storeModel.findOne({ _id: id }).exec();
@@ -66,19 +66,15 @@ export class StoreService {
   }
 
   remove(id: string) {
-    if (!mongoose.isValidObjectId(id))
+    if (!isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
     return this.storeModel.deleteOne({ _id: id }).exec();
   }
 
-  private keepOnlyLocaleSpecificFields(lang: Language, options: Object) {
+  private keepOnlyLocaleSpecificFields(options: Object, lang: Language) {
     if ((lang as Language) === (Language.en as Language))
       Object.assign(options, { select: '-name_ar' });
     else Object.assign(options, { select: '-name_en' });
-  }
-
-  private addLeanOption(options: Object) {
-    Object.assign(options, { lean: true });
   }
 }

@@ -2,7 +2,6 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { logToConsole } from 'src/utils/helpers/consolelogger';
 import { User } from 'src/user/entities/user.entity';
 
 //

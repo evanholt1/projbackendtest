@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
+import { Language } from 'src/utils/enums/languages.enum';
+import { StoreType } from 'src/utils/enums/store-type.enum';
 import { Point } from 'src/utils/schemas/point.schema';
 
 export type StoreDocument = Store & Document;
@@ -25,8 +27,12 @@ export class Store {
   @Prop()
   location: Point;
 
-  @Prop({ enum: ['Restaurant', 'Supermarket'] })
-  type: string;
+  @ApiProperty({
+    type: () => StoreType,
+    enum: Object.keys(StoreType).filter((key) => Number.isNaN(parseInt(key))),
+  })
+  @Prop()
+  type: StoreType;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);

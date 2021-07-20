@@ -1,7 +1,8 @@
 /**
- * DTO for Get requests of Store.
+ * addition on DTO for Get requests of Store. (Query()).
  * allows filtering by equality of any of Store class' properties,
  * as well as pagination options,
+ * language,
  * and more.
  */
 
@@ -21,4 +22,7 @@ export class StoreQueryOptions extends PartialType(Store) {
   @ApiProperty({ default: 'en', type: () => Language })
   @Transform(({ value }) => (value === 'en' ? Language.en : Language.ar))
   language: Language;
+
+  @ApiPropertyOptional()
+  sortField?: string;
 }
