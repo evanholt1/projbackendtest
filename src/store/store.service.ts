@@ -24,11 +24,10 @@ export class StoreService {
   async create(createStoreDto: CreateStoreDto): Promise<Store> {
     // const createdCat = new this.storeModel(createStoreDto);
     // return createdCat.save(createStoreDto);
-    const store = await this.storeModel.create({
+    return this.storeModel.create({
       ...createStoreDto,
       rating: 0.0,
     });
-    return store;
   }
 
   findAll(storeQueryOptions: StoreQueryOptions): Promise<Store[]> {

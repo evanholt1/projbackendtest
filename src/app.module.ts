@@ -10,6 +10,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './user/guards/jwt-auth.guard';
 import { RolesGuard } from './user/guards/roles.guard';
 import { Connection } from 'mongoose';
+import { LandingCardModule } from './landing-card/landing-card.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { Connection } from 'mongoose';
     ItemModule,
     UserModule,
     OrderModule,
+    LandingCardModule,
     // AuthModule,
   ],
   controllers: [],
