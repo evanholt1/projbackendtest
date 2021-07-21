@@ -1,6 +1,6 @@
 import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId } from 'mongoose';
+import { Model, isValidObjectId, Types } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
 import { Language } from 'src/utils/enums/languages.enum';
 import { addLeanOption } from 'src/utils/helpers/mongoose/add-lean-option';
@@ -9,19 +9,19 @@ import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
 import { setFieldToSortBy } from 'src/utils/helpers/mongoose/set-field-to-sort-by.helper';
+import { Category } from 'src/category/schemas/category.schema';
 @Injectable()
 export class StoreService {
   constructor(
     @InjectModel(Store.name)
     private readonly storeModel: Model<StoreDocument>,
     @InjectModel(Item.name)
-    private readonly ItemModel: Model<ItemDocument>,
+    private readonly itemModel: Model<ItemDocument>,
   ) {}
 
   async create(createStoreDto: CreateStoreDto): Promise<Store> {
     // const createdCat = new this.storeModel(createStoreDto);
     // return createdCat.save(createStoreDto);
-    console.log(createStoreDto.location);
     const store = await this.storeModel.create({
       ...createStoreDto,
       rating: 0.0,
@@ -41,10 +41,33 @@ export class StoreService {
 
   findAllItems(storeId: string): Promise<Item[]> {
     //@ts-ignore
-    return this.ItemModel.paginate({ store: storeId });
+    return this.itemModel.paginate({ store: storeId });
     // return this.ItemModel.find({
     //   store: storeId,
     // } as FilterQuery<Item>).exec(); // for relation "no overload" error
+  }
+
+  findStoresWithCategoryItems(categoryId: string) {
+    const findStoresWithCategoryItemsAggregate = this.itemModel.aggregate([
+      { $match: { category: Types.ObjectId(categoryId) } },
+      { $project: { name_en: 0 } },
+      { $group: { _id: '$store' } },
+      {
+        $lookup: {
+          from: 'stores',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'rests_with_cat_items',
+        },
+      },
+      { $unwind: '$rests_with_cat_items' },
+      { $replaceRoot: { newRoot: '$rests_with_cat_items' } },
+    ]);
+    //return findStoresWithCategoryItemsAggregate.exec();
+    //@ts-ignore
+    return this.itemModel.aggregatePaginate(
+      findStoresWithCategoryItemsAggregate,
+    );
   }
 
   findOne(id: string): Promise<Store> {

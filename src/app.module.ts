@@ -24,6 +24,7 @@ import { Connection } from 'mongoose';
         useNewUrlParser: true,
         connectionFactory: (connection) => {
           connection.plugin(require('mongoose-paginate-v2'));
+          connection.plugin(require('mongoose-aggregate-paginate-v2'));
           return connection;
         },
       }),

@@ -38,7 +38,6 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @Get()
-  //@UsePipes(new ValidationPipe({ transform: true }))
   @PaginationOptions('paginationOptions', PaginateOptions)
   findAll(@Query() storeQueryOptions: StoreQueryOptions) {
     return this.storeService.findAll(storeQueryOptions);
@@ -50,6 +49,12 @@ export class StoreController {
   @Get(':id/items')
   findAllItems(@Param('id') id: string) {
     return this.storeService.findAllItems(id);
+  }
+
+  @Public()
+  @Get('withCategoryItems')
+  findStoresWithCategoryItems(@Query('categoryId') categoryId: string) {
+    return this.storeService.findStoresWithCategoryItems(categoryId);
   }
 
   // @Roles(Role.All)
