@@ -22,6 +22,8 @@ import { Public } from 'src/utils/decorators/public-route.decorator';
 import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
 import { PaginationOptions } from 'src/utils/decorators/pagination-options.decorator';
+import { StoreType } from 'src/utils/enums/store-type.enum';
+import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
 
 @Controller('store')
 @ApiTags('Store')
@@ -48,13 +50,19 @@ export class StoreController {
   @Public()
   @Get(':id/items')
   findAllItems(@Param('id') id: string) {
-    return this.storeService.findAllItems(id);
+    return this.storeService.findStoreItems(id);
   }
 
   @Public()
   @Get('withCategoryItems')
-  findStoresWithCategoryItems(@Query('categoryId') categoryId: string) {
-    return this.storeService.findStoresWithCategoryItems(categoryId);
+  @PaginationOptions('paginationOptions', PaginateOptions)
+  findStoresWithCategoryItems(
+    @Query()
+    findStoresWithCategoryItemsQueryParamsDto: FindStoresWithCategoryItemsQueryParamsDto,
+  ) {
+    return this.storeService.findStoresWithCategoryItems(
+      findStoresWithCategoryItemsQueryParamsDto,
+    );
   }
 
   // @Roles(Role.All)
