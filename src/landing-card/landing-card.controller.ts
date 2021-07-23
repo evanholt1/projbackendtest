@@ -25,10 +25,10 @@ export class LandingCardController {
     return this.landingCardService.create(createLandingCardDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.landingCardService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.landingCardService.findAll();
+  }
 
   @Get('random')
   @Public()

@@ -19,7 +19,7 @@ export class LandingCardService {
   }
 
   findAll() {
-    return `This action returns all landingCard`;
+    return this.landingCardModel.find();
   }
 
   findRandom(size: Number) {
