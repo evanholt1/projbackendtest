@@ -17,9 +17,12 @@ import { LandingCardModule } from './landing-card/landing-card.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
+        // uri: `mongodb+srv://evan:${configService.get(
+        //   'mongo_cloud_pass',
+        // )}@mern.xupmz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
         uri: `mongodb+srv://evan:${configService.get(
           'mongo_cloud_pass',
-        )}@mern.xupmz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+        )}@ecommerce.meizb.mongodb.net/ecommerce?retryWrites=true&w=majority`,
         useUnifiedTopology: true,
         useCreateIndex: true,
         useNewUrlParser: true,
