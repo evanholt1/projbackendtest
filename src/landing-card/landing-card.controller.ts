@@ -26,6 +26,7 @@ export class LandingCardController {
   }
 
   @Get()
+  @Public()
   findAll() {
     return this.landingCardService.findAll();
   }
