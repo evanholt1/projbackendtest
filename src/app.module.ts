@@ -22,7 +22,7 @@ import { LandingCardModule } from './landing-card/landing-card.module';
         // )}@mern.xupmz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
         uri: `mongodb+srv://evan:${configService.get(
           'mongo_cloud_pass',
-        )}@ecommerce.meizb.mongodb.net/ecommerce?retryWrites=true&w=majority`,
+        )}@ecommerce.meizb.mongodb.net/bigmart?retryWrites=true&w=majority`,
         useUnifiedTopology: true,
         useCreateIndex: true,
         useNewUrlParser: true,
