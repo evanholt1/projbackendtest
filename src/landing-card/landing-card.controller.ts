@@ -13,6 +13,7 @@ import { CreateLandingCardDto } from './dto/create-landing-card.dto';
 import { UpdateLandingCardDto } from './dto/update-landing-card.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/utils/decorators/public-route.decorator';
+import { Language } from "../utils/enums/languages.enum";
 
 @Controller('landing-card')
 @ApiTags('Landing-Card')
@@ -27,13 +28,13 @@ export class LandingCardController {
 
   @Get()
   @Public()
-  findAll() {
-    return this.landingCardService.findAll();
+  findAll(@Query('language') language: Language) {
+    return this.landingCardService.findAll(language);
   }
 
   @Get('random')
   @Public()
-  findRandom(@Query('count') count: Number) {
+  findRandom(@Query('count') count: number) {
     return this.landingCardService.findRandom(count);
   }
 

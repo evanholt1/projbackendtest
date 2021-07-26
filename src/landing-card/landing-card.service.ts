@@ -7,6 +7,7 @@ import {
   LandingCard,
   LandingCardDocument,
 } from './schemas/landing-card.schema';
+import { Language } from "../utils/enums/languages.enum";
 
 @Injectable()
 export class LandingCardService {
@@ -18,11 +19,14 @@ export class LandingCardService {
     return this.landingCardModel.create(createLandingCardDto);
   }
 
-  findAll() {
-    return this.landingCardModel.find();
+  findAll(language: Language) {
+    return this.landingCardModel.find(
+      {},
+      this.removeOtherLocalesFieldsFromProjection(language),
+    );
   }
 
-  findRandom(size: Number) {
+  findRandom(size: number) {
     return this.landingCardModel.aggregate([{ $sample: { size: size } }]);
   }
 
@@ -36,5 +40,11 @@ export class LandingCardService {
 
   remove(id: number) {
     return `This action removes a #${id} landingCard`;
+  }
+
+  removeOtherLocalesFieldsFromProjection(language: Language) {
+    return language === Language.en
+      ? { title_ar: 0, subtitle_ar: 0, body_ar: 0 }
+      : { title_en: 0, subtitle_en: 0, body_en: 0 };
   }
 }
