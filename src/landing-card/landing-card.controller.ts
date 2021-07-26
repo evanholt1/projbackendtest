@@ -1,19 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { LandingCardService } from './landing-card.service';
 import { CreateLandingCardDto } from './dto/create-landing-card.dto';
-import { UpdateLandingCardDto } from './dto/update-landing-card.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/utils/decorators/public-route.decorator';
-import { Language } from "../utils/enums/languages.enum";
+import { Language } from '../utils/enums/languages.enum';
+import { UpdateLandingCardDto } from './dto/update-landing-card.dto';
 
 @Controller('landing-card')
 @ApiTags('Landing-Card')
@@ -26,30 +26,45 @@ export class LandingCardController {
     return this.landingCardService.create(createLandingCardDto);
   }
 
-  @Get()
   @Public()
-  findAll(@Query('language') language: Language) {
+  @ApiQuery({ name: 'language', enum: Language })
+  @Get()
+  findAll(@Query('language') language: Language = Language.en) {
     return this.landingCardService.findAll(language);
   }
 
-  @Get('random')
   @Public()
-  findRandom(@Query('count') count: number, @Query('language') language: Language) {
+  @ApiQuery({ name: 'language', enum: Language })
+  @Get('random')
+  findRandom(
+    @Query('count') count: number,
+    @Query('language') language: Language = Language.en,
+  ) {
     return this.landingCardService.findRandom(count, language);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.landingCardService.findOne(id);
-  // }
+  @Public()
+  @Get(':id')
+  @ApiQuery({ name: 'language', enum: Language })
+  findOne(
+    @Param('id') id: string,
+    @Query('language') language: Language = Language.en,
+  ) {
+    return this.landingCardService.findOne(id, language);
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateLandingCardDto: UpdateLandingCardDto) {
-  //   return this.landingCardService.update(id, updateLandingCardDto);
-  // }
+  @Public()
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateLandingCardDto: UpdateLandingCardDto,
+  ) {
+    return this.landingCardService.update(id, updateLandingCardDto);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.landingCardService.remove(id);
-  // }
+  @Public()
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.landingCardService.remove(id);
+  }
 }
