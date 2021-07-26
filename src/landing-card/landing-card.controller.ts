@@ -34,8 +34,8 @@ export class LandingCardController {
 
   @Get('random')
   @Public()
-  findRandom(@Query('count') count: number) {
-    return this.landingCardService.findRandom(count);
+  findRandom(@Query('count') count: number, @Query('language') language: Language) {
+    return this.landingCardService.findRandom(count, language);
   }
 
   // @Get(':id')

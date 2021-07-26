@@ -26,8 +26,11 @@ export class LandingCardService {
     );
   }
 
-  findRandom(size: number) {
-    return this.landingCardModel.aggregate([{ $sample: { size: size } }]);
+  findRandom(size: number, language: Language) {
+    return this.landingCardModel.aggregate([
+      { $sample: { size: size } },
+      { $project: this.removeOtherLocalesFieldsFromProjection(language) },
+    ]);
   }
 
   findOne(id: number) {
