@@ -3,6 +3,7 @@ import { AddonOption } from './addonOption.schema';
 
 //@Schema()
 export class AddonCategory {
+  @Prop()
   name_en: string;
 
   @Prop()

@@ -1,10 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document } from 'mongoose';
 import { Language } from 'src/utils/enums/languages.enum';
 import { StoreType } from 'src/utils/enums/store-type.enum';
 import { Point } from 'src/utils/schemas/point.schema';
 import { LandingCardSize } from '../enums/landing-card-size.enum';
+import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
 export type LandingCardDocument = LandingCard & Document;
 
@@ -15,25 +16,16 @@ export class LandingCard {
   _id: string;
 
   @Prop()
-  title_en: string;
+  title: LocalizedText;
 
   @Prop()
-  title_ar: string;
+  subtitle: LocalizedText;
+
+  @Prop()
+  body: LocalizedText;
 
   @Prop()
   image_url: string;
-
-  @Prop()
-  subtitle_en: string;
-
-  @Prop()
-  subtitle_ar: string;
-
-  @Prop()
-  body_en: string;
-
-  @Prop()
-  body_ar: string;
 
   @ApiProperty({
     type: () => LandingCardSize,
@@ -50,6 +42,24 @@ export class LandingCard {
   })
   @Prop()
   type: StoreType;
+
+  // @Prop()
+  // title_en: string;
+  //
+  // @Prop()
+  // title_ar: string;
+
+  // @Prop()
+  // subtitle_en: string;
+  //
+  // @Prop()
+  // subtitle_ar: string;
+
+  // @Prop()
+  // body_en: string;
+  //
+  // @Prop()
+  // body_ar: string;
 }
 
 export const LandingCardSchema = SchemaFactory.createForClass(LandingCard);
