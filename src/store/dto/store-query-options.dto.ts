@@ -19,9 +19,9 @@ export class StoreQueryOptions extends PartialType(Store) {
   @Type(() => PaginateOptions) // form class-transformer @Transform to run.
   paginationOptions: PaginateOptions;
 
-  @ApiProperty({ default: 'en', type: () => Language })
-  @Transform(({ value }) => (value === 'en' ? Language.en : Language.ar))
-  language: Language;
+  // @ApiProperty({ default: 'en', type: () => Language })
+  // @Transform(({ value }) => (value === 'en' ? Language.en : Language.ar))
+  // language: Language;
 
   @ApiPropertyOptional()
   sortField?: string;

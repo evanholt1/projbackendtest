@@ -30,20 +30,25 @@ export class StoreService {
     });
   }
 
-  findAll(storeQueryOptions: StoreQueryOptions): Promise<Store[]> {
-    let options = { ...storeQueryOptions.paginationOptions };
-    this.keepOnlyLocaleSpecificFieldsInSelection(
-      options,
-      storeQueryOptions.language,
-    );
-    addLeanOption(options);
-    if (storeQueryOptions.sortField)
-      setFieldToSortBy(options, storeQueryOptions.sortField);
+  findAll(
+    storeQueryOptions: StoreQueryOptions,
+    language: Language,
+  ): Promise<Store[]> {
+    const options = {
+      ...storeQueryOptions.paginationOptions,
+      ...this.projectByLang(language, true),
+      ...addLeanOption(),
+      ...(storeQueryOptions.sortField
+        ? setFieldToSortBy(storeQueryOptions.sortField)
+        : {}),
+    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.storeModel.paginate(storeQueryOptions, options);
   }
 
   findStoreItems(storeId: string): Promise<Item[]> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.itemModel.paginate({ store: storeId });
     // return this.ItemModel.find({
@@ -55,7 +60,7 @@ export class StoreService {
     findStoresWithCategoryItemsQueryParamsDto: FindStoresWithCategoryItemsQueryParamsDto,
   ) {
     const dto = findStoresWithCategoryItemsQueryParamsDto;
-    let projection = {};
+    const projection = {};
     this.keepOnlyLocaleSpecificFieldsInProjection(projection, dto.language);
 
     const findStoresWithCategoryItemsAggregate = this.itemModel.aggregate([
@@ -84,6 +89,7 @@ export class StoreService {
       { $replaceRoot: { newRoot: '$rests_with_cat_items' } },
       { $project: projection },
     ]);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.itemModel.aggregatePaginate(
       findStoresWithCategoryItemsAggregate,
@@ -103,7 +109,7 @@ export class StoreService {
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
     const store = await this.storeModel.findOne({ _id: id }).exec();
     //const store = await this.storeModel.findById(id).exec();
-    console.log('stores ' + (await this.storeModel.find().exec()));
+
     store.set(updateStoreDto);
     return store.save();
   }
@@ -115,8 +121,19 @@ export class StoreService {
     return this.storeModel.deleteOne({ _id: id }).exec();
   }
 
+  projectByLang(language: Language, paginating: boolean) {
+    if (!paginating) {
+      if (!language) return { __v: 0 }; // as $project needs anything inside
+      return language === Language.en ? { 'name.ar': 0 } : { 'name.en': 0 };
+    }
+    if (!language) return { select: { __v: 0 } }; // as $project needs anything inside
+    return language === Language.en
+      ? { select: { 'name.ar': 0 } }
+      : { select: { 'name.en': 0 } };
+  }
+
   private keepOnlyLocaleSpecificFieldsInSelection(
-    options: Object,
+    options: Record<string, unknown>,
     lang: Language,
   ) {
     if ((lang as Language) === (Language.en as Language))
@@ -125,7 +142,7 @@ export class StoreService {
   }
 
   private keepOnlyLocaleSpecificFieldsInProjection(
-    options: Object,
+    options: Record<string, unknown>,
     lang: Language,
   ) {
     if ((lang as Language) === (Language.en as Language))

@@ -21,8 +21,7 @@ export class LandingCardService {
   }
 
   findAll(language: Language) {
-    const selection = language ? this.projectByLang(language) : {};
-    return this.landingCardModel.find({}, selection);
+    return this.landingCardModel.find({}, this.projectByLang(language));
   }
 
   findRandom(size: number, language: Language) {
@@ -58,6 +57,7 @@ export class LandingCardService {
   }
 
   projectByLang(language: Language) {
+    if (!language) return { __v: 0 }; // as $project needs anything inside
     return language === Language.en
       ? { 'title.ar': 0, 'subtitle.ar': 0, 'body.ar': 0 }
       : { 'title.en': 0, 'subtitle.en': 0, 'body.en': 0 };

@@ -3,6 +3,7 @@
  * to 'true'.
  */
 
-export function addLeanOption(options: Object) {
-  Object.assign(options, { lean: true });
+export function addLeanOption() {
+  //Object.assign(options, { lean: true });
+  return { lean: true };
 }

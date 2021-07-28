@@ -37,11 +37,11 @@ export class LandingCardController {
   }
 
   @Public()
-  @ApiQuery({ name: 'language', enum: Language })
+  @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get('random')
   findRandom(
     @Query('count') count: number,
-    @Query('language') language: Language = Language.en,
+    @Query('language') language: Language,
   ) {
     return this.landingCardService.findRandom(count, language);
   }

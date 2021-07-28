@@ -7,10 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  UseInterceptors,
-  ClassSerializerInterceptor,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { StoreService } from './store.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -22,8 +18,8 @@ import { Public } from 'src/utils/decorators/public-route.decorator';
 import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
 import { PaginationOptions } from 'src/utils/decorators/pagination-options.decorator';
-import { StoreType } from 'src/utils/enums/store-type.enum';
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
+import { Language } from '../utils/enums/languages.enum';
 
 @Controller('store')
 @ApiTags('Store')
@@ -39,10 +35,14 @@ export class StoreController {
 
   @Public()
   //@ApiBearerAuth()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get()
   @PaginationOptions('paginationOptions', PaginateOptions)
-  findAll(@Query() storeQueryOptions: StoreQueryOptions) {
-    return this.storeService.findAll(storeQueryOptions);
+  findAll(
+    @Query() storeQueryOptions: StoreQueryOptions,
+    @Query('language') language: Language,
+  ) {
+    return this.storeService.findAll(storeQueryOptions, language);
   }
 
   // @Roles(Role.All)
