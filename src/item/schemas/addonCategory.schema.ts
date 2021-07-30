@@ -1,13 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AddonOption } from './addonOption.schema';
+import { ApiProperty } from '@nestjs/swagger';
+import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
 //@Schema()
 export class AddonCategory {
-  @Prop()
-  name_en: string;
+  // @Prop()
+  // name_en: string;
+  //
+  // @Prop()
+  // name_ar: string;
 
+  @ApiProperty({ name: 'name', type: Object })
   @Prop()
-  name_ar: string;
+  name: LocalizedText;
 
   @Prop()
   min_selection: number;

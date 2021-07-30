@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
@@ -36,6 +41,7 @@ export class UserService {
   }
 
   findAll(): Promise<User[]> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.userModel.paginate();
     //return this.userModel.find().exec();
@@ -48,8 +54,20 @@ export class UserService {
     return this.userModel.findById(id).exec();
   }
 
-  findOneByUUID(uuid: string): Promise<User> {
+  async findOneByUUID(uuid: string) {
     return this.userModel.findOne({ uuid: uuid }).exec();
+  }
+
+  async findUserByUUID(uuid: string) {
+    const user = await this.userModel.findOne({ uuid: uuid }).exec();
+    if (!user)
+      throw new HttpException('That UID is not found!', HttpStatus.NOT_FOUND);
+    const payload = { sub: user._id, role: user.role }; // "sub" due to jwt standard name
+    const jwt = await this.jwtService.signAsync(payload);
+    return {
+      token: jwt,
+      user: user,
+    };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {

@@ -1,12 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Document } from 'mongoose';
-import { Language } from 'src/utils/enums/languages.enum';
 import { StoreType } from 'src/utils/enums/store-type.enum';
 import { Point } from 'src/utils/schemas/point.schema';
 import { LocalizedText } from '../../utils/schemas/localized-text.schema';
-import { Type } from 'class-transformer';
-import { PaginateOptions } from '../../utils/classes/paginate-options.class';
 
 export type StoreDocument = Store & Document;
 
@@ -31,8 +28,12 @@ export class Store {
   @Prop()
   image_url: string;
 
-  @Prop()
+  @Prop({ default: 0.0 })
   rating: number;
+
+  // https://stackoverflow.com/questions/10196579/algorithm-used-to-calculate-5-star-ratings/38378697
+  @Prop({ default: 0 })
+  rating_count: number;
 
   @Prop()
   location: Point;

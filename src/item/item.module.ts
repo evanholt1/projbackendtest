@@ -10,6 +10,6 @@ import { Item, ItemSchema } from './schemas/item.schema';
   ],
   controllers: [ItemController],
   providers: [ItemService],
-  exports: [MongooseModule],
+  exports: [MongooseModule, ItemService],
 })
 export class ItemModule {}

@@ -16,8 +16,8 @@ import { Roles } from 'src/user/decorators/roles.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { StoreQueryOptions } from './dto/store-query-options.dto';
-import { PaginateOptions } from 'src/utils/classes/paginate-options.class';
-import { PaginationOptions } from 'src/utils/decorators/pagination-options.decorator';
+import { PaginationOptions } from 'src/utils/classes/paginate-options.class';
+import { PaginationOptionsDecorator } from 'src/utils/decorators/pagination-options.decorator';
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
 import { Language } from '../utils/enums/languages.enum';
 
@@ -37,7 +37,7 @@ export class StoreController {
   //@ApiBearerAuth()
   @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get()
-  @PaginationOptions('paginationOptions', PaginateOptions)
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   findAll(
     @Query() storeQueryOptions: StoreQueryOptions,
     @Query('language') language: Language,
@@ -55,7 +55,7 @@ export class StoreController {
 
   @Public()
   @Get('withCategoryItems')
-  @PaginationOptions('paginationOptions', PaginateOptions)
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   findStoresWithCategoryItems(
     @Query()
     findStoresWithCategoryItemsQueryParamsDto: FindStoresWithCategoryItemsQueryParamsDto,

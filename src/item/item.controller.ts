@@ -6,15 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './schemas/item.schema';
 import { Roles } from 'src/user/decorators/roles.decorator';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/utils/enums/role.enum';
 import { Public } from 'src/utils/decorators/public-route.decorator';
+import { Language } from '../utils/enums/languages.enum';
+import { PaginationOptionsDecorator } from '../utils/decorators/pagination-options.decorator';
+import { PaginationOptions } from '../utils/classes/paginate-options.class';
 
 @Controller('item')
 @ApiTags('Item')
@@ -29,12 +33,23 @@ export class ItemController {
     return this.itemService.create(createItemDto);
   }
 
+  // @Public()
+  // @Get('/localize')
+  // localize() {
+  //   return this.itemService.localize();
+  // }
+
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
-  findAll(): Promise<Item[]> {
-    return this.itemService.findAll();
+  findAll(
+    @Query('language') language: Language,
+    @Query('paginationOptions') paginationOptions: PaginationOptions,
+  ): Promise<Item[]> {
+    return this.itemService.findAll(language, paginationOptions);
   }
 
   // @Roles(Role.All)

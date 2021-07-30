@@ -6,14 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Language } from '../utils/enums/languages.enum';
+import { PaginationOptions } from '../utils/classes/paginate-options.class';
+import { PaginationOptionsDecorator } from '../utils/decorators/pagination-options.decorator';
 
 @Controller('category')
 @ApiTags('Category')
@@ -28,12 +32,23 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
+  // @Public()
+  // @Get('/localize')
+  // localize() {
+  //   return this.categoryService.localize();
+  // }
+
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAll(
+    @Query('language') language: Language,
+    @Query('paginationOptions') paginationOptions: PaginationOptions,
+  ) {
+    return this.categoryService.findAll(language, paginationOptions);
   }
 
   // @Roles(Role.All)
@@ -47,9 +62,19 @@ export class CategoryController {
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get(':id/items')
-  findOneCatItems(@Param('id') id: string) {
-    return this.categoryService.findOneCatItems(id);
+  findOneCatItems(
+    @Param('id') id: string,
+    @Query('language') language: Language,
+    @Query('paginationOptions') paginationOptions: PaginationOptions,
+  ) {
+    return this.categoryService.findOneCatItems(
+      id,
+      language,
+      paginationOptions,
+    );
   }
 
   @Roles(Role.All)

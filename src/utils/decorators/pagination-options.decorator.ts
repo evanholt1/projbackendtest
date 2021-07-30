@@ -15,7 +15,10 @@ import { ApiExtraModels, ApiQuery, getSchemaPath } from '@nestjs/swagger';
  *  - automatic transformation with nestjs
  */
 // eslint-disable-next-line @typescript-eslint/ban-types,@typescript-eslint/explicit-module-boundary-types
-export function PaginationOptions(fieldName: string, filterDto: Function) {
+export function PaginationOptionsDecorator(
+  fieldName: string,
+  filterDto: Function,
+) {
   return applyDecorators(
     ApiExtraModels(filterDto),
     ApiQuery({

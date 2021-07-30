@@ -7,7 +7,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { ToBoolean } from '../decorators/to-boolean.decorator';
 
-export class PaginateOptions {
+export class PaginationOptions {
   constructor({
     page,
     limit,

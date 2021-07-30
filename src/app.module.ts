@@ -17,9 +17,6 @@ import { LandingCardModule } from './landing-card/landing-card.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        // uri: `mongodb+srv://evan:${configService.get(
-        //   'mongo_cloud_pass',
-        // )}@mern.xupmz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
         uri: `mongodb+srv://evan:${configService.get(
           'mongo_cloud_pass',
         )}@ecommerce.meizb.mongodb.net/bigmart?retryWrites=true&w=majority`,
@@ -27,7 +24,9 @@ import { LandingCardModule } from './landing-card/landing-card.module';
         useCreateIndex: true,
         useNewUrlParser: true,
         connectionFactory: (connection) => {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           connection.plugin(require('mongoose-paginate-v2'));
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           connection.plugin(require('mongoose-aggregate-paginate-v2'));
           return connection;
         },

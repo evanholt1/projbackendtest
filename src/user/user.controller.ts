@@ -11,7 +11,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public } from 'src/utils/decorators/public-route.decorator';
-import { Role } from 'src/utils/enums/role.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 
@@ -46,6 +45,12 @@ export class UserController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
+  }
+
+  @Public()
+  @Get('/uid/:uid')
+  findOneByUid(@Param('uid') uid: string) {
+    return this.userService.findUserByUUID(uid);
   }
 
   //@Public()
