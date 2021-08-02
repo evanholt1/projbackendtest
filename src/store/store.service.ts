@@ -12,6 +12,7 @@ import { setFieldToSortBy } from 'src/utils/helpers/mongoose/set-field-to-sort-b
 import { Category } from 'src/category/schemas/category.schema';
 import { StoreType } from 'src/utils/enums/store-type.enum';
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
+import { exec } from 'child_process';
 @Injectable()
 export class StoreService {
   constructor(
@@ -119,6 +120,32 @@ export class StoreService {
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
     return this.storeModel.deleteOne({ _id: id }).exec();
+  }
+
+  search(query: string) {
+    console.log(query);
+    return this.storeModel.aggregate([
+      {
+        $search: {
+          index: 'storeNameIndex', // optional, defaults to "default"
+          autocomplete: {
+            query: `${query}`,
+            path: 'name.en',
+          },
+        },
+        //@ts-ignore
+        // $search: {
+        //   autocomplete: {
+        //     query: `${query}`,
+        //     path: 'name.en',
+        //     fuzzy: {
+        //       maxEdits: 2,
+        //       prefixLength: 3,
+        //     },
+        //   },
+        // },
+      },
+    ]);
   }
 
   projectByLang(language: Language, paginating: boolean) {

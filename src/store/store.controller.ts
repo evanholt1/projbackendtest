@@ -45,6 +45,12 @@ export class StoreController {
     return this.storeService.findAll(storeQueryOptions, language);
   }
 
+  @Public()
+  @Get('/search')
+  search(@Query('query') query: string) {
+    return this.storeService.search(query);
+  }
+
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()

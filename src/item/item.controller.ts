@@ -52,6 +52,15 @@ export class ItemController {
     return this.itemService.findAll(language, paginationOptions);
   }
 
+  @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @Get('storeItemsByCat/:storeId')
+  findStoreItemsByCat(
+    @Query('language') language: Language,
+    @Param('storeId') storeId: string,
+  ) {
+    return this.itemService.findStoreItemsByCat(language, storeId);
+  }
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()

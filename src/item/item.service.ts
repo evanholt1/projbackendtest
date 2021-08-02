@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -6,11 +12,15 @@ import { Item, ItemDocument } from './schemas/item.schema';
 import * as mongoose from 'mongoose';
 import { Language } from '../utils/enums/languages.enum';
 import { PaginationOptions } from '../utils/classes/paginate-options.class';
+import { Types } from 'mongoose';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class ItemService {
   constructor(
     @InjectModel(Item.name) private itemModel: mongoose.Model<ItemDocument>,
+    @Inject(forwardRef(() => CategoryService))
+    private categoryService: CategoryService,
   ) {}
   create(createItemDto: CreateItemDto): Promise<Item> {
     return this.itemModel.create(createItemDto);
@@ -28,6 +38,30 @@ export class ItemService {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.itemModel.paginate({}, options);
+  }
+
+  findStoreItemsByCat(language: Language, storeId: string) {
+    const initialProject = {
+      ...this.projectByLang(language, false),
+    };
+    console.log(initialProject);
+    return this.itemModel.aggregate([
+      [
+        { $project: initialProject },
+        { $match: { store: Types.ObjectId(storeId) } },
+        { $group: { _id: '$category', items: { $push: '$$ROOT' } } },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'category',
+          },
+        },
+        { $unwind: { path: '$category' } },
+        { $project: this.projectCatInAggByLang(language) },
+      ],
+    ]);
   }
 
   findOne(id: string): Promise<Item> {
@@ -57,32 +91,51 @@ export class ItemService {
   }
 
   projectByLang(language: Language, paginating: boolean) {
-    const arFields = {
+    const arFieldsRemoved = {
       'name.ar': 0,
       'description.ar': 0,
       'addonsByCat.name.ar': 0,
       'addonsByCat.options.name.ar': 0,
     };
 
-    const enFields = {
+    const enFieldsRemoved = {
       'name.en': 0,
       'description.en': 0,
       'addonsByCat.name.en': 0,
       'addonsByCat.options.name.en': 0,
     };
 
+    const removedFields = {
+      __v: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      ...(language === Language.en ? arFieldsRemoved : {}),
+      ...(language === Language.ar ? enFieldsRemoved : {}),
+    };
+
     // for aggregates
     if (!paginating) {
       if (!language) return { __v: 0 }; // as $project needs anything inside
-      return language === Language.en ? arFields : enFields;
+      return removedFields;
     }
     if (!language) return {};
 
     return language === Language.en
-      ? { select: arFields }
-      : { select: enFields };
+      ? { select: removedFields }
+      : { select: removedFields };
   }
 
+  projectCatInAggByLang(language) {
+    const removedFields = {
+      'category.createdAt': 0,
+      'category.updatedAt': 0,
+      _id: 0,
+      'category.__v': 0,
+      ...(language === Language.en ? { 'category.name.ar': 0 } : {}),
+      ...(language === Language.ar ? { 'category.name.en': 0 } : {}),
+    };
+    return removedFields;
+  }
   // async localize(): Promise<string> {
   //   console.log('here');
   //   const docs: ItemDocument[] = await this.itemModel.find().exec();

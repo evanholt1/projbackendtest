@@ -5,6 +5,8 @@ import * as mongoose from 'mongoose';
 import { Order, OrderDocument } from './schemas/order.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
+import { from, fromEvent, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class OrderService {
@@ -17,7 +19,7 @@ export class OrderService {
   }
 
   findAll() {
-    //return this.orderModel.find().exec();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.orderModel.paginate();
   }

@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import * as mongoose from 'mongoose';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -16,6 +22,7 @@ export class CategoryService {
     private categoryModel: mongoose.Model<CategoryDocument>,
     @InjectModel(Item.name)
     private readonly ItemModel: mongoose.Model<ItemDocument>,
+    @Inject(forwardRef(() => ItemService))
     private itemService: ItemService,
   ) {}
   create(createCategoryDto: CreateCategoryDto) {

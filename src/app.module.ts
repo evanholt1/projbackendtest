@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './user/guards/jwt-auth.guard';
 import { RolesGuard } from './user/guards/roles.guard';
 import { Connection } from 'mongoose';
 import { LandingCardModule } from './landing-card/landing-card.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { LandingCardModule } from './landing-card/landing-card.module';
     UserModule,
     OrderModule,
     LandingCardModule,
+    SocketModule,
     // AuthModule,
   ],
   controllers: [],
