@@ -59,6 +59,7 @@ export class ItemService {
           },
         },
         { $unwind: { path: '$category' } },
+        { $sort: { _id: 1 } },
         { $project: this.projectCatInAggByLang(language) },
       ],
     ]);
