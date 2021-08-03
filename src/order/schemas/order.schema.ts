@@ -42,6 +42,7 @@ export class Order {
       'driver-delivering-user-waiting',
       'driver-delivered-order-finished',
     ],
+    default: 'user-ordered-store-pending',
   })
   status: string;
 }
