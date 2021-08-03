@@ -36,19 +36,26 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @ApiQuery({ name: 'language', enum: Language, required: false })
-  @Get()
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
+  @Get()
   findAll(
     @Query() storeQueryOptions: StoreQueryOptions,
     @Query('language') language: Language,
+    @Query('userId') userId: string,
   ) {
-    return this.storeService.findAll(storeQueryOptions, language);
+    return this.storeService.findAll(storeQueryOptions, language, userId);
   }
 
   @Public()
+  @ApiQuery({ name: 'language', enum: Language })
+  //@PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get('/search')
-  search(@Query('query') query: string) {
-    return this.storeService.search(query);
+  search(
+    @Query('query') query: string,
+    @Query('language') language: Language,
+    //@Query('paginationOptions') paginationOptions: PaginationOptions,
+  ) {
+    return this.storeService.search(query, language);
   }
 
   // @Roles(Role.All)

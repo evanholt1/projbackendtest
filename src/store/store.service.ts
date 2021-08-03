@@ -1,18 +1,17 @@
-import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, isValidObjectId, Types } from 'mongoose';
+import { isValidObjectId, Model, Types } from 'mongoose';
 import { Item, ItemDocument } from 'src/item/schemas/item.schema';
 import { Language } from 'src/utils/enums/languages.enum';
-import { addLeanOption } from 'src/utils/helpers/mongoose/add-lean-option';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { StoreQueryOptions } from './dto/store-query-options.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { Store, StoreDocument } from './schemas/store.schema';
 import { setFieldToSortBy } from 'src/utils/helpers/mongoose/set-field-to-sort-by.helper';
-import { Category } from 'src/category/schemas/category.schema';
-import { StoreType } from 'src/utils/enums/store-type.enum';
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
-import { exec } from 'child_process';
+import { User, UserDocument } from '../user/schemas/user.schema';
+import { PaginationOptions } from '../utils/classes/paginate-options.class';
+
 @Injectable()
 export class StoreService {
   constructor(
@@ -20,6 +19,8 @@ export class StoreService {
     private readonly storeModel: Model<StoreDocument>,
     @InjectModel(Item.name)
     private readonly itemModel: Model<ItemDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
   ) {}
 
   async create(createStoreDto: CreateStoreDto): Promise<Store> {
@@ -31,21 +32,29 @@ export class StoreService {
     });
   }
 
-  findAll(
+  async findAll(
     storeQueryOptions: StoreQueryOptions,
     language: Language,
-  ): Promise<Store[]> {
-    const options = {
-      ...storeQueryOptions.paginationOptions,
-      ...this.projectByLang(language, true),
-      ...addLeanOption(),
-      ...(storeQueryOptions.sortField
-        ? setFieldToSortBy(storeQueryOptions.sortField)
-        : {}),
-    };
+    userId: string,
+  ) {
+    const options = storeQueryOptions.paginationOptions;
+
+    const user = await this.userModel.findById(userId);
+
+    const getStoresWithUserFavField = this.storeModel.aggregate([
+      { $project: { ...this.projectByLang(language, false) } },
+      { $addFields: { isFavourite: { $in: ['$_id', user.favouriteStores] } } },
+    ]);
+    if (storeQueryOptions.sortField)
+      getStoresWithUserFavField.sort(
+        setFieldToSortBy(storeQueryOptions.sortField)['sort'],
+      );
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    return this.storeModel.paginate(storeQueryOptions, options);
+    return this.storeModel.aggregatePaginate(
+      getStoresWithUserFavField,
+      options,
+    );
   }
 
   findStoreItems(storeId: string): Promise<Item[]> {
@@ -122,29 +131,28 @@ export class StoreService {
     return this.storeModel.deleteOne({ _id: id }).exec();
   }
 
-  search(query: string) {
+  search(
+    query: string,
+    language: Language,
+    //paginationOptions: PaginationOptions,
+  ) {
     console.log(query);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     return this.storeModel.aggregate([
       {
         $search: {
           index: 'storeNameIndex', // optional, defaults to "default"
           autocomplete: {
             query: `${query}`,
-            path: 'name.en',
+            path: language === Language.en ? 'name.en' : 'name.ar',
+            fuzzy: {
+              maxEdits: 1,
+            },
           },
         },
-        //@ts-ignore
-        // $search: {
-        //   autocomplete: {
-        //     query: `${query}`,
-        //     path: 'name.en',
-        //     fuzzy: {
-        //       maxEdits: 2,
-        //       prefixLength: 3,
-        //     },
-        //   },
-        // },
       },
+      //{ $project: this.projectByLang(language, false) },
     ]);
   }
 

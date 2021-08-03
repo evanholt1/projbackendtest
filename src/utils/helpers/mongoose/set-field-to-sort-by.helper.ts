@@ -6,3 +6,9 @@ export function setFieldToSortBy(
 ): Record<string, unknown> {
   return { sort: { [sortProperty]: -1 } };
 }
+
+export function setFieldToSortAggregateBy(
+  sortProperty: string,
+): Record<string, unknown> {
+  return { $sort: { [sortProperty]: -1 } };
+}
