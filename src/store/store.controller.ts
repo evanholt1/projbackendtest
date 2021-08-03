@@ -36,6 +36,7 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @ApiQuery({ name: 'language', enum: Language, required: false })
+  @ApiQuery({ name: 'userId', required: false })
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
   findAll(

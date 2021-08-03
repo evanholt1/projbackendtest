@@ -38,12 +38,14 @@ export class StoreService {
     userId: string,
   ) {
     const options = storeQueryOptions.paginationOptions;
-
-    const user = await this.userModel.findById(userId);
+    let user;
+    if (userId && userId != 'null')
+      user = await this.userModel.findById(userId);
+    const aggregateIn = user ? { $in: ['$_id', user.favouriteStores] } : false;
 
     const getStoresWithUserFavField = this.storeModel.aggregate([
       { $project: { ...this.projectByLang(language, false) } },
-      { $addFields: { isFavourite: { $in: ['$_id', user.favouriteStores] } } },
+      { $addFields: { isFavourite: aggregateIn } },
     ]);
     if (storeQueryOptions.sortField)
       getStoresWithUserFavField.sort(
