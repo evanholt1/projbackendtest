@@ -48,14 +48,14 @@ export class StoreController {
 
   @Public()
   @ApiQuery({ name: 'language', enum: Language })
-  //@PaginationOptionsDecorator('paginationOptions', PaginationOptions)
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get('/search')
   search(
     @Query('query') query: string,
     @Query('language') language: Language,
-    //@Query('paginationOptions') paginationOptions: PaginationOptions,
+    @Query('paginationOptions') paginationOptions: PaginationOptions,
   ) {
-    return this.storeService.search(query, language);
+    return this.storeService.search(query, language, paginationOptions);
   }
 
   // @Roles(Role.All)

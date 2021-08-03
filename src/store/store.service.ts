@@ -134,12 +134,9 @@ export class StoreService {
   search(
     query: string,
     language: Language,
-    //paginationOptions: PaginationOptions,
+    paginationOptions: PaginationOptions,
   ) {
-    console.log(query);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    return this.storeModel.aggregate([
+    const searchAgg = this.storeModel.aggregate([
       {
         $search: {
           index: 'storeNameIndex', // optional, defaults to "default"
@@ -152,8 +149,11 @@ export class StoreService {
           },
         },
       },
-      //{ $project: this.projectByLang(language, false) },
+      { $project: this.projectByLang(language, false) },
     ]);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    return this.storeModel.aggregatePaginate(searchAgg, paginationOptions);
   }
 
   projectByLang(language: Language, paginating: boolean) {
