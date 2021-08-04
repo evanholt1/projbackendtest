@@ -27,7 +27,7 @@ export class User {
   @Prop({ enum: Role })
   role: string;
 
-  @Prop({ type: schema.Types.ObjectId, ref: 'Store' })
+  @Prop({ type: schema.Types.ObjectId, ref: 'Store', default: [] })
   favouriteStores: Store[];
 }
 

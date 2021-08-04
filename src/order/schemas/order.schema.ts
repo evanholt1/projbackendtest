@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import * as mongoose from 'mongoose';
 import { Item } from 'src/item/schemas/item.schema';
 import { User } from 'src/user/schemas/user.schema';
+import { Store } from '../../store/schemas/store.schema';
 
 export type OrderDocument = Order & Document;
 
@@ -11,11 +12,17 @@ export class Order {
   @ApiProperty({ type: String })
   _id: mongoose.Schema.Types.ObjectId;
 
+  @ApiProperty({ type: String })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
+  @ApiProperty({ type: [String], isArray: true })
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }])
   items: Item[];
+
+  @ApiProperty({ type: String })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Store' })
+  store: Store;
 
   @Prop()
   totalPrice: number;
