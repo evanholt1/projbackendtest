@@ -4,6 +4,7 @@ import { truncate } from 'fs';
 import { Document, Schema as schema, Types } from 'mongoose';
 import { Role } from 'src/utils/enums/role.enum';
 import { Store } from '../../store/schemas/store.schema';
+import { Point } from '../../utils/schemas/point.schema';
 
 export type UserDocument = User & Document;
 
@@ -27,8 +28,14 @@ export class User {
   @Prop({ enum: Role })
   role: string;
 
-  @Prop({ type: schema.Types.ObjectId, ref: 'Store', default: [] })
+  @Prop({ type: [Types.ObjectId], ref: 'Store', required: false })
   favouriteStores: Store[];
+
+  @Prop({ default: [] })
+  currentLocation: Point;
+
+  @Prop({ default: [] })
+  savedAddresses: Point[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -12,6 +12,7 @@ import { RolesGuard } from './user/guards/roles.guard';
 import { Connection } from 'mongoose';
 import { LandingCardModule } from './landing-card/landing-card.module';
 import { SocketModule } from './socket/socket.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { SocketModule } from './socket/socket.module';
     OrderModule,
     LandingCardModule,
     SocketModule,
+    OfferModule,
     // AuthModule,
   ],
   controllers: [],

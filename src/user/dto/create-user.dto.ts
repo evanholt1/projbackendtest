@@ -1,3 +1,5 @@
+import { Schema, Types } from 'mongoose';
+
 export class CreateUserDto {
   // constructor(
   //   name: string,
@@ -20,6 +22,7 @@ export class CreateUserDto {
     phone_number,
     login_type,
     avatar_url,
+    favouriteStores,
   }: {
     name?: string;
     uuid?: string;
@@ -27,6 +30,7 @@ export class CreateUserDto {
     phone_number?: string;
     login_type?: string;
     avatar_url?: string;
+    favouriteStores?: Types.ObjectId[];
   } = {}) {
     this.name = name;
     this.uuid = uuid;
@@ -34,6 +38,7 @@ export class CreateUserDto {
     this.phone_number = phone_number;
     this.login_type = login_type;
     this.avatar_url = avatar_url;
+    this.favouriteStores = favouriteStores;
   }
 
   name: string;
@@ -42,4 +47,5 @@ export class CreateUserDto {
   email: string;
   login_type: string;
   avatar_url: string;
+  favouriteStores: Types.ObjectId[];
 }

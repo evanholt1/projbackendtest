@@ -53,6 +53,8 @@ export class Item {
 
   @Prop([AddonCategory])
   addonsByCat: AddonCategory[];
+
+  salesCount: number;
 }
 
 export const ItemSchema = SchemaFactory.createForClass(Item);

@@ -7,15 +7,23 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery } from 'mongoose';
 import { from, fromEvent, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Item, ItemDocument } from '../item/schemas/item.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectModel(Order.name)
     private readonly orderModel: mongoose.Model<OrderDocument>,
+    @InjectModel(Item.name)
+    private readonly itemModel: mongoose.Model<ItemDocument>,
   ) {}
   create(createOrderDto: CreateOrderDto) {
-    return this.orderModel.create(createOrderDto);
+    const items = this.itemModel.find({ _id: { $in: createOrderDto.items } });
+    const itemUpdates = items.map((item) => {
+      item.salesCount++;
+      return item.save();
+    });
+    return Promise.all([itemUpdates, this.orderModel.create(createOrderDto)]);
   }
 
   findAll() {

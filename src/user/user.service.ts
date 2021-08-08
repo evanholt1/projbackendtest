@@ -1,17 +1,12 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Role } from 'src/utils/enums/role.enum';
-import { Roles } from './decorators/roles.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UserService {
@@ -21,6 +16,12 @@ export class UserService {
   ) {}
 
   async signUpUser(signUpUserDto: CreateUserDto) {
+    // signUpUserDto.favouriteStores = signUpUserDto.favouriteStores.map(
+    //   (e) => new Types.ObjectId(e),
+    // );
+    signUpUserDto.favouriteStores = signUpUserDto.favouriteStores.map(
+      (e) => new Types.ObjectId(e),
+    );
     let user: User;
     user = await this.findOneByUUID(signUpUserDto.uuid);
 
