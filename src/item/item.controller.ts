@@ -34,6 +34,12 @@ export class ItemController {
   }
 
   // @Public()
+  // @Get('/addDiscount')
+  // addDiscount() {
+  //   return this.itemService.addDiscount();
+  // }
+
+  // @Public()
   // @Get('/localize')
   // localize() {
   //   return this.itemService.localize();

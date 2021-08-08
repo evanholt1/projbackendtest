@@ -30,6 +30,8 @@ export class Item {
   @Prop()
   display_price: number;
 
+  @Prop({ default: 0, min: 0, max: 100 })
+  price_discount_percentage: number;
   // @Prop()
   // description_en: string;
   //

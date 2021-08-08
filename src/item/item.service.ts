@@ -158,4 +158,13 @@ export class ItemService {
   //   await Promise.all(promises);
   //   return 'Success';
   // }
+
+  // async addDiscount() {
+  //   const items = await this.itemModel.find().exec();
+  //   const promise = items.map((item) => {
+  //     item.price_discount_percentage = 0;
+  //     item.save();
+  //   });
+  //   return Promise.all(promise);
+  // }
 }

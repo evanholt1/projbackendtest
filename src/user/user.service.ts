@@ -19,9 +19,10 @@ export class UserService {
     // signUpUserDto.favouriteStores = signUpUserDto.favouriteStores.map(
     //   (e) => new Types.ObjectId(e),
     // );
-    signUpUserDto.favouriteStores = signUpUserDto.favouriteStores.map(
-      (e) => new Types.ObjectId(e),
-    );
+    if (signUpUserDto.favouriteStores)
+      signUpUserDto.favouriteStores = signUpUserDto.favouriteStores.map(
+        (e) => new Types.ObjectId(e),
+      );
     let user: User;
     user = await this.findOneByUUID(signUpUserDto.uuid);
 
