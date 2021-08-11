@@ -56,6 +56,7 @@ export class Item {
   @Prop([AddonCategory])
   addonsByCat: AddonCategory[];
 
+  @Prop()
   salesCount: number;
 }
 

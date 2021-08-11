@@ -33,11 +33,11 @@ export class ItemController {
     return this.itemService.create(createItemDto);
   }
 
-  // @Public()
-  // @Get('/addDiscount')
-  // addDiscount() {
-  //   return this.itemService.addDiscount();
-  // }
+  @Public()
+  @Get('/z')
+  addx() {
+    return this.itemService.addSAlesCount();
+  }
 
   // @Public()
   // @Get('/localize')

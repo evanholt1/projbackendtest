@@ -17,8 +17,10 @@ export class OrderService {
     @InjectModel(Item.name)
     private readonly itemModel: mongoose.Model<ItemDocument>,
   ) {}
-  create(createOrderDto: CreateOrderDto) {
-    const items = this.itemModel.find({ _id: { $in: createOrderDto.items } });
+  async create(createOrderDto: CreateOrderDto) {
+    const items = await this.itemModel
+      .find({ _id: { $in: createOrderDto.items } })
+      .exec();
     const itemUpdates = items.map((item) => {
       item.salesCount++;
       return item.save();

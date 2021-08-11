@@ -154,12 +154,6 @@ export class OfferService {
             HttpStatus.CONFLICT,
           );
       });
-    this.offerModel
-      .find({
-        $and: [{ 'affectedItems.category': { $in: affectedCategories } }, {}],
-      })
-      .populate('affectedItems')
-      .exec();
   }
   private throwIfExistingOfferAffectsAnItem(affectedItems) {
     this.offerModel
@@ -174,5 +168,46 @@ export class OfferService {
             HttpStatus.CONFLICT,
           );
       });
+  }
+
+  private async throwIfNewOfferAffectedCategoriesWillBreakAnAffectedItemsOffer(
+    affectedCategories,
+  ) {
+    const results = await this.offerModel.aggregate([
+      {
+        $match: {
+          isActive: true,
+          affectedItems: { $exists: true, $not: { $size: 0 } },
+        },
+      },
+      {
+        $lookup: {
+          from: 'items',
+          let: { affectedItems: '$affectedItems' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ['$_id', '$$affectedItems'] },
+                    { $in: ['$category', affectedCategories] },
+                  ],
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+              },
+            },
+          ],
+          as: 'affectedItems',
+        },
+      },
+    ]);
+    results.forEach((result) => {
+      if (result.affectedItems > 0)
+        throw new HttpException(`offer`, HttpStatus.CONFLICT);
+    });
   }
 }
