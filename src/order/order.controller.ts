@@ -7,15 +7,17 @@ import {
   Param,
   Delete,
   Sse,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './schemas/order.schema';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { interval, map, Observable } from 'rxjs';
+import { Language } from '../utils/enums/languages.enum';
 
 @Controller('order')
 @ApiTags('Order')
@@ -38,6 +40,12 @@ export class OrderController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.orderService.findOne(id);
+  }
+
+  @Public()
+  @Get('/user/:id')
+  findUserOrders(@Param('id') id: string) {
+    return this.orderService.findUserOrders(id);
   }
 
   @Public()
