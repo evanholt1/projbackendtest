@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Item } from 'src/item/schemas/item.schema';
 import { User } from 'src/user/schemas/user.schema';
 import { Store } from '../../store/schemas/store.schema';
+import { OrderItem } from './order-item.schema';
 
 export type OrderDocument = Order & Document;
 
@@ -16,9 +17,10 @@ export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 
-  @ApiProperty({ type: [String], isArray: true })
-  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }])
-  items: Item[];
+  // @ApiProperty({ type: [String], isArray: true })
+  // @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }])
+  // items: Item[];
+  items: OrderItem[];
 
   @ApiProperty({ type: String })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Store' })

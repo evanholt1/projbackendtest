@@ -19,7 +19,7 @@ export class OrderService {
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const items = await this.itemModel
-      .find({ _id: { $in: createOrderDto.items } })
+      .find({ id: { $in: createOrderDto.items } })
       .exec();
     const itemUpdates = items.map((item) => {
       item.salesCount++;
@@ -31,7 +31,7 @@ export class OrderService {
   findAll() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    return this.orderModel.paginate();
+    return this.orderModel.paginate({}, { populate: 'items' });
   }
 
   findOne(id: string) {
