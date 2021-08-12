@@ -54,6 +54,12 @@ export class Order {
     default: 'user-ordered-store-pending',
   })
   status: string;
+
+  @Prop({ default: false })
+  reviewed: boolean;
+
+  @Prop({ min: 0.0, max: 5.0, default: 0.0 })
+  review: number;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
