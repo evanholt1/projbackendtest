@@ -19,6 +19,17 @@ export class OfferService {
     @InjectModel(Item.name)
     private itemModel: mongoose.Model<ItemDocument>,
   ) {}
+
+  /**
+   * Creates an offer. does alot of checks beforehand.
+   * Checks if a user sent both or none AffectedItems/AffectedCategories
+   * Converts string[] to Types.objectId[] because nestjs
+   * does not want to do it itself in any way shape or form.
+   * Checks if category offer will conflict with an item offer of a category included in the new offer,
+   * or if an item offer conflicts with a category offer affecting those items
+   * if all works, creates an offer, and if 'isActive' is set to true,
+   * even activates it.
+   */
   async create(createOfferDto: CreateOfferDto) {
     this.throwIfOfferAffectsBothCategoriesAndItems(
       createOfferDto.affectedCategories,
@@ -29,9 +40,20 @@ export class OfferService {
       createOfferDto.affectedItems,
     );
 
-    if (createOfferDto.affectedCategories)
+    if (createOfferDto.affectedCategories) {
+      createOfferDto.affectedCategories = createOfferDto.affectedCategories.map(
+        (affectedCat) => Types.ObjectId(affectedCat),
+      );
       this.throwIfExistingOfferAffectsACategory(createOfferDto);
-    else this.throwIfExistingOfferAffectsAnItem(createOfferDto);
+      await this.throwIfNewOfferAffectedCategoriesWillBreakAnAffectedItemsOffer(
+        createOfferDto.affectedCategories,
+      );
+    } else {
+      createOfferDto.affectedItems = createOfferDto.affectedItems.map(
+        (affectedItem) => Types.ObjectId(affectedItem),
+      );
+      this.throwIfExistingOfferAffectsAnItem(createOfferDto);
+    }
 
     let isActivePromise = null;
 
@@ -94,6 +116,7 @@ export class OfferService {
         updateOfferDto.affectedCategories.map(
           (catId) => new Types.ObjectId(catId),
         );
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const updatedCategories: {
         _id: Types.ObjectId;
@@ -173,41 +196,93 @@ export class OfferService {
   private async throwIfNewOfferAffectedCategoriesWillBreakAnAffectedItemsOffer(
     affectedCategories,
   ) {
-    const results = await this.offerModel.aggregate([
-      {
-        $match: {
-          isActive: true,
-          affectedItems: { $exists: true, $not: { $size: 0 } },
+    const activeItemAffectingOffersWithAnItemCategoryInAffectedCategories =
+      await this.offerModel.aggregate([
+        {
+          $match: {
+            isActive: true,
+            affectedItems: {
+              $exists: true,
+              $not: {
+                $size: 0,
+              },
+            },
+          },
         },
-      },
-      {
-        $lookup: {
-          from: 'items',
-          let: { affectedItems: '$affectedItems' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $in: ['$_id', '$$affectedItems'] },
-                    { $in: ['$category', affectedCategories] },
-                  ],
+        {
+          $lookup: {
+            from: 'items',
+            let: {
+              affectedItems: '$affectedItems',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $in: ['$_id', '$$affectedItems'],
+                      },
+                      {
+                        $in: ['$category', affectedCategories],
+                      },
+                    ],
+                  },
                 },
               },
-            },
-            {
-              $project: {
-                _id: 1,
+              {
+                $project: {
+                  _id: 1,
+                },
               },
-            },
-          ],
-          as: 'affectedItems',
+            ],
+            as: 'affectedItems',
+          },
         },
-      },
-    ]);
-    results.forEach((result) => {
-      if (result.affectedItems > 0)
-        throw new HttpException(`offer`, HttpStatus.CONFLICT);
-    });
+        {
+          $match: {
+            'affectedItems.0': {
+              $exists: true,
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            conflictingOffers: {
+              $push: '$_id',
+            },
+            // affectedItems: {
+            //   $push: '$affectedItems',
+            // },
+          },
+        },
+        // {
+        //   $project: {
+        //     doesConflict: {
+        //       $gt: [
+        //         {
+        //           $size: '$affectedItems',
+        //         },
+        //         0,
+        //       ],
+        //     },
+        //   },
+        // },
+      ]);
+    const result =
+      activeItemAffectingOffersWithAnItemCategoryInAffectedCategories;
+
+    console.log(result);
+
+    if (result.length > 0 && result[0].conflictingOffers.length > 0)
+      throw new HttpException(
+        `Offer ${result[0].conflictingOffers[0]._id} affects an item in a category which will be affected by this new offer`,
+        HttpStatus.CONFLICT,
+      );
+    // results.forEach((result) => {
+    //   if (result.affectedItems > 0)
+    //     throw new HttpException(`offer`, HttpStatus.CONFLICT);
+    // });
   }
 }

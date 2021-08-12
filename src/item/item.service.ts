@@ -138,15 +138,6 @@ export class ItemService {
     return removedFields;
   }
 
-  async addSAlesCount() {
-    const docs = await this.itemModel.find().exec();
-    const p = docs.map((doc) => {
-      doc.salesCount = 0;
-      return doc.save();
-    });
-    await Promise.all(p);
-    return true;
-  }
   // async localize(): Promise<string> {
   //   console.log('here');
   //   const docs: ItemDocument[] = await this.itemModel.find().exec();

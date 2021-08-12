@@ -6,7 +6,7 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger';
 import { LocalizedText } from '../../utils/schemas/localized-text.schema';
-import { Schema as MongooseSchema, Model, Document } from 'mongoose';
+import { Schema as MongooseSchema, Model, Document, Types } from 'mongoose';
 import { Category } from '../../category/schemas/category.schema';
 import { Item } from '../../item/schemas/item.schema';
 import { Store } from '../../store/schemas/store.schema';
@@ -21,16 +21,16 @@ export class Offer {
   text: LocalizedText;
 
   @ApiPropertyOptional({ type: String })
-  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: 'Category' }])
-  affectedCategories: Category[];
+  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: Category.name }])
+  affectedCategories: Category[] | Types.ObjectId[];
 
   @ApiPropertyOptional({ type: String })
-  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: 'Item' }])
-  affectedItems: Item[];
+  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: Item.name }])
+  affectedItems: Item[] | Types.ObjectId[];
 
   @ApiPropertyOptional({ type: String })
-  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: 'Store' }])
-  affectedStore: Store;
+  @Prop([{ type: MongooseSchema.Types.ObjectId, ref: Store.name }])
+  affectedStore: Store | Types.ObjectId;
 
   @ApiProperty({ minimum: 0, maximum: 100 })
   @Prop()

@@ -43,9 +43,13 @@ export class OrderController {
   }
 
   @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get('/user/:id')
-  findUserOrders(@Param('id') id: string) {
-    return this.orderService.findUserOrders(id);
+  findUserOrders(
+    @Param('id') id: string,
+    @Query('language') language: Language,
+  ) {
+    return this.orderService.findUserOrders(id, language);
   }
 
   @Public()

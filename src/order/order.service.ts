@@ -7,6 +7,8 @@ import { Order, OrderDocument } from './schemas/order.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Item, ItemDocument } from '../item/schemas/item.schema';
 import { Language } from '../utils/enums/languages.enum';
+import { StoreService } from '../store/store.service';
+import { ItemService } from '../item/item.service';
 
 @Injectable()
 export class OrderService {
@@ -15,6 +17,8 @@ export class OrderService {
     private readonly orderModel: mongoose.Model<OrderDocument>,
     @InjectModel(Item.name)
     private readonly itemModel: mongoose.Model<ItemDocument>,
+    private storeService: StoreService,
+    private itemService: ItemService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -41,9 +45,19 @@ export class OrderService {
     return this.orderModel.findById(id).exec();
   }
 
-  findUserOrders(userId: string) {
+  findUserOrders(userId: string, language: Language) {
     return this.orderModel
       .find({ user: Types.ObjectId(userId) } as FilterQuery<Order>)
+      .populate('store')
+      .populate({
+        path: 'store',
+        select:
+          this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
+      })
+      .populate({
+        path: 'items.item',
+        select: this.itemService.projectByLang(language, false),
+      })
       .exec();
   }
 

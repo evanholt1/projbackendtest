@@ -169,13 +169,12 @@ export class StoreService {
       : { select: { 'name.en': 0 } };
   }
 
-  private keepOnlyLocaleSpecificFieldsInSelection(
-    options: Record<string, unknown>,
-    lang: Language,
-  ) {
+  keepOnlyLocaleSpecificFieldsInSelection(lang: Language) {
     if ((lang as Language) === (Language.en as Language))
-      Object.assign(options, { select: '-name_ar' });
-    else Object.assign(options, { select: '-name_en' });
+      return 'name_en image_url';
+    else if ((lang as Language) === (Language.ar as Language))
+      return 'name_ar image_url';
+    else return 'name_en name_ar image_url';
   }
 
   private keepOnlyLocaleSpecificFieldsInProjection(

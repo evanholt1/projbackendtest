@@ -33,12 +33,6 @@ export class ItemController {
     return this.itemService.create(createItemDto);
   }
 
-  @Public()
-  @Get('/z')
-  addx() {
-    return this.itemService.addSAlesCount();
-  }
-
   // @Public()
   // @Get('/localize')
   // localize() {
