@@ -171,10 +171,10 @@ export class StoreService {
 
   keepOnlyLocaleSpecificFieldsInSelection(lang: Language) {
     if ((lang as Language) === (Language.en as Language))
-      return 'name_en image_url';
+      return 'name.en image_url';
     else if ((lang as Language) === (Language.ar as Language))
-      return 'name_ar image_url';
-    else return 'name_en name_ar image_url';
+      return 'name.ar image_url';
+    else return 'name.en name.ar image_url';
   }
 
   private keepOnlyLocaleSpecificFieldsInProjection(
