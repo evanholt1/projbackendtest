@@ -20,6 +20,8 @@ import { PaginationOptions } from 'src/utils/classes/paginate-options.class';
 import { PaginationOptionsDecorator } from 'src/utils/decorators/pagination-options.decorator';
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
 import { Language } from '../utils/enums/languages.enum';
+import { StoreType } from '../utils/enums/store-type.enum';
+import { Store } from './schemas/store.schema';
 
 @Controller('store')
 @ApiTags('Store')
@@ -53,15 +55,22 @@ export class StoreController {
   @Public()
   //@ApiBearerAuth()
   @ApiQuery({ name: 'language', enum: Language, required: false })
+  @ApiQuery({ name: 'storeType', enum: StoreType, required: false })
   @ApiQuery({ name: 'userId', required: false })
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
   findAll(
     @Query() storeQueryOptions: StoreQueryOptions,
     @Query('language') language: Language,
+    @Query('storeType') storeType: StoreType,
     @Query('userId') userId: string,
   ) {
-    return this.storeService.findAll(storeQueryOptions, language, userId);
+    return this.storeService.findAll(
+      storeQueryOptions,
+      language,
+      userId,
+      storeType,
+    );
   }
 
   @Public()

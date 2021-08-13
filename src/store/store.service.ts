@@ -11,6 +11,7 @@ import { setFieldToSortBy } from 'src/utils/helpers/mongoose/set-field-to-sort-b
 import { FindStoresWithCategoryItemsQueryParamsDto } from './dto/store-with-cat-items.dto';
 import { User, UserDocument } from '../user/schemas/user.schema';
 import { PaginationOptions } from '../utils/classes/paginate-options.class';
+import { StoreType } from '../utils/enums/store-type.enum';
 
 @Injectable()
 export class StoreService {
@@ -36,6 +37,7 @@ export class StoreService {
     storeQueryOptions: StoreQueryOptions,
     language: Language,
     userId: string,
+    storeType: StoreType,
   ) {
     const options = storeQueryOptions.paginationOptions;
     let user;
@@ -44,6 +46,8 @@ export class StoreService {
     const aggregateIn = user ? { $in: ['$_id', user.favouriteStores] } : false;
 
     const getStoresWithUserFavField = this.storeModel.aggregate([
+      ...(storeType ? [{ $match: { type: storeType } }] : []),
+      //{ $match: { type: storeType } },
       { $project: { ...this.projectByLang(language, false) } },
       { $addFields: { isFavourite: aggregateIn } },
     ]);
