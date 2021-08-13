@@ -50,6 +50,23 @@ export class StoreController {
   @Public()
   @ApiQuery({ name: 'language', enum: Language })
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
+  @Get('/byDistance')
+  findClosestByDistance(
+    @Query('language') language: Language,
+    @Query('paginationOptions') paginationOptions: PaginationOptions,
+    @Query('userLat') userLat: number,
+    @Query('userLong') userLong: number,
+  ) {
+    return this.storeService.findClosestByDistance(
+      language,
+      paginationOptions,
+      [userLong, userLat],
+    );
+  }
+
+  @Public()
+  @ApiQuery({ name: 'language', enum: Language })
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get('/search')
   search(
     @Query('query') query: string,

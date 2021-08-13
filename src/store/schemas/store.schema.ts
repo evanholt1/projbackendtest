@@ -35,7 +35,7 @@ export class Store {
   @Prop({ default: 0 })
   rating_count: number;
 
-  @Prop()
+  @Prop({ index: '2dsphere' })
   location: Point;
 
   @ApiProperty({

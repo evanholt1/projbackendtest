@@ -116,6 +116,32 @@ export class StoreService {
     return this.storeModel.findById(id).exec();
   }
 
+  async findClosestByDistance(
+    language: Language,
+    paginationOptions: PaginationOptions,
+    userCoords,
+  ) {
+    //@ts-ignore
+    return this.storeModel.paginate(
+      {
+        location: {
+          $near: {
+            $geometry: {
+              type: 'Point',
+              coordinates: userCoords,
+            },
+            $maxDistance: 100000, // in metres
+          },
+        },
+      },
+      {
+        ...paginationOptions,
+        forceCountFn: true,
+        ...this.projectByLang(language, true),
+      },
+    );
+  }
+
   async update(id: string, updateStoreDto: UpdateStoreDto): Promise<Store> {
     if (!isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
@@ -169,6 +195,7 @@ export class StoreService {
       : { select: { 'name.en': 0 } };
   }
 
+  // used in offers only
   keepOnlyLocaleSpecificFieldsInSelection(lang: Language) {
     if ((lang as Language) === (Language.en as Language))
       return 'name.en image_url';
