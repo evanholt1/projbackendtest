@@ -38,27 +38,41 @@ export class OrderService {
     return this.orderModel.paginate({}, { populate: 'items' });
   }
 
-  findOne(id: string) {
+  findOne(id: string, language: Language) {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
-    return this.orderModel.findById(id).exec();
-  }
-
-  findUserOrders(userId: string, language: Language) {
     return this.orderModel
-      .find({ user: Types.ObjectId(userId) } as FilterQuery<Order>)
-      .populate('store')
+      .findById(id)
       .populate({
         path: 'store',
         select:
           this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
       })
       .populate({
-        path: 'items.item',
+        path: 'items',
+        model: 'Item',
         select: this.itemService.projectByLang(language, false),
       })
       .exec();
+  }
+
+  findUserOrders(userId: string, language: Language) {
+    return (
+      this.orderModel
+        .find({ user: Types.ObjectId(userId) } as FilterQuery<Order>)
+        //.populate('store')
+        .populate({
+          path: 'store',
+          select:
+            this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
+        })
+        .populate({
+          path: 'items.item',
+          select: this.itemService.projectByLang(language, false),
+        })
+        .exec()
+    );
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto) {
