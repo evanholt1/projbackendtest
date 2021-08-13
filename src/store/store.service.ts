@@ -122,23 +122,44 @@ export class StoreService {
     userCoords,
   ) {
     //@ts-ignore
-    return this.storeModel.paginate(
-      {
-        location: {
-          $near: {
-            $geometry: {
-              type: 'Point',
-              coordinates: userCoords,
-            },
-            $maxDistance: 100000, // in metres
+    // query to return closest stores. does not include storeMaxDeliveryDistance
+    // return this.storeModel.paginate(
+    //   {
+    //     location: {
+    //       $near: {
+    //         $geometry: {
+    //           type: 'Point',
+    //           coordinates: userCoords,
+    //         },
+    //         $maxDistance: 100000, // in metres
+    //       },
+    //     },
+    //   },
+    //   {
+    //     ...paginationOptions,
+    //     forceCountFn: true,
+    //     ...this.projectByLang(language, true),
+    //   },
+    // );
+
+    //@ts-ignore
+    return this.storeModel.aggregatePaginate(
+      [
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: userCoords },
+            distanceField: 'calculated',
           },
         },
-      },
-      {
-        ...paginationOptions,
-        forceCountFn: true,
-        ...this.projectByLang(language, true),
-      },
+        {
+          $match: {
+            $expr: {
+              $lte: ['$maxDeliveryDistance', '$calculated'],
+            },
+          },
+        },
+      ],
+      { ...paginationOptions, ...this.projectByLang(language, false) },
     );
   }
 

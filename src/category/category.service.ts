@@ -14,6 +14,8 @@ import { Item, ItemDocument } from 'src/item/schemas/item.schema';
 import { Language } from '../utils/enums/languages.enum';
 import { ItemService } from '../item/item.service';
 import { PaginationOptions } from '../utils/classes/paginate-options.class';
+import { StoreType } from '../utils/enums/store-type.enum';
+import { Store, StoreDocument } from '../store/schemas/store.schema';
 
 @Injectable()
 export class CategoryService {
@@ -22,6 +24,8 @@ export class CategoryService {
     private categoryModel: mongoose.Model<CategoryDocument>,
     @InjectModel(Item.name)
     private readonly ItemModel: mongoose.Model<ItemDocument>,
+    @InjectModel(Store.name)
+    private storeModel: mongoose.Model<StoreDocument>,
     @Inject(forwardRef(() => ItemService))
     private itemService: ItemService,
   ) {}
@@ -29,14 +33,88 @@ export class CategoryService {
     return this.categoryModel.create(createCategoryDto);
   }
 
-  findAll(language: Language, paginationOptions: PaginationOptions) {
-    const options = {
-      ...this.projectByLang(language, true),
-      ...paginationOptions,
-    };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    return this.categoryModel.paginate({}, options);
+  findAll(
+    language: Language,
+    paginationOptions: PaginationOptions,
+    storeType: StoreType,
+  ) {
+    if (storeType) {
+      const aggregate = this.storeModel.aggregate([
+        {
+          $match: {
+            type: storeType,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+          },
+        },
+        {
+          $lookup: {
+            from: 'items',
+            let: {
+              storeId: '$_id',
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $eq: ['$store', '$$storeId'],
+                  },
+                },
+              },
+              {
+                $project: {
+                  category: 1,
+                  _id: 0,
+                },
+              },
+            ],
+            as: 'items',
+          },
+        },
+        {
+          $unwind: {
+            path: '$items',
+            preserveNullAndEmptyArrays: false,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            storeTypeItemCategories: {
+              $addToSet: '$items',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'storeTypeItemCategories.category',
+            foreignField: '_id',
+            as: 'categories',
+          },
+        },
+        {
+          $project: {
+            ...this.projectGetCategoriesByLang(language),
+            storeTypeItemCategories: 0,
+            _id: 0,
+          },
+        },
+      ]);
+      //@ts-ignore
+      return this.storeModel.aggregatePaginate(aggregate, paginationOptions);
+    } else {
+      console.log('here');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      return this.categoryModel.paginate(
+        {},
+        { ...this.projectByLang(language, true), ...paginationOptions },
+      );
+    }
   }
 
   findOne(id: string) {
@@ -93,6 +171,11 @@ export class CategoryService {
       : { select: { 'name.en': 0 } };
   }
 
+  projectGetCategoriesByLang(language: Language) {
+    if (!language) return {};
+    if (language == Language.en) return { 'categories.name.ar': 0 };
+    if (language == Language.ar) return { 'categories.name.en': 0 };
+  }
   // async localize() {
   //   const docs = await this.categoryModel.find().exec();
   //   const promises = docs.map((doc) => {

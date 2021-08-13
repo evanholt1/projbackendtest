@@ -18,6 +18,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Language } from '../utils/enums/languages.enum';
 import { PaginationOptions } from '../utils/classes/paginate-options.class';
 import { PaginationOptionsDecorator } from '../utils/decorators/pagination-options.decorator';
+import { StoreType } from '../utils/enums/store-type.enum';
 
 @Controller('category')
 @ApiTags('Category')
@@ -42,13 +43,15 @@ export class CategoryController {
   // @ApiBearerAuth()
   @Public()
   @ApiQuery({ name: 'language', enum: Language, required: false })
+  @ApiQuery({ name: 'storeType', enum: StoreType, required: false })
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
   findAll(
     @Query('language') language: Language,
     @Query('paginationOptions') paginationOptions: PaginationOptions,
+    @Query('storeType') storeType: StoreType,
   ) {
-    return this.categoryService.findAll(language, paginationOptions);
+    return this.categoryService.findAll(language, paginationOptions, storeType);
   }
 
   // @Roles(Role.All)

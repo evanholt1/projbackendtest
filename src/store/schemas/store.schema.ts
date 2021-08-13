@@ -38,6 +38,9 @@ export class Store {
   @Prop({ index: '2dsphere' })
   location: Point;
 
+  @Prop({ default: 10000 })
+  maxDeliveryDistance: number;
+
   @ApiProperty({
     type: () => StoreType,
     enum: Object.keys(StoreType).filter((key) => Number.isNaN(parseInt(key))),

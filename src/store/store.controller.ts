@@ -34,20 +34,6 @@ export class StoreController {
   }
 
   @Public()
-  //@ApiBearerAuth()
-  @ApiQuery({ name: 'language', enum: Language, required: false })
-  @ApiQuery({ name: 'userId', required: false })
-  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
-  @Get()
-  findAll(
-    @Query() storeQueryOptions: StoreQueryOptions,
-    @Query('language') language: Language,
-    @Query('userId') userId: string,
-  ) {
-    return this.storeService.findAll(storeQueryOptions, language, userId);
-  }
-
-  @Public()
   @ApiQuery({ name: 'language', enum: Language })
   @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get('/byDistance')
@@ -62,6 +48,20 @@ export class StoreController {
       paginationOptions,
       [userLong, userLat],
     );
+  }
+
+  @Public()
+  //@ApiBearerAuth()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @ApiQuery({ name: 'userId', required: false })
+  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
+  @Get()
+  findAll(
+    @Query() storeQueryOptions: StoreQueryOptions,
+    @Query('language') language: Language,
+    @Query('userId') userId: string,
+  ) {
+    return this.storeService.findAll(storeQueryOptions, language, userId);
   }
 
   @Public()

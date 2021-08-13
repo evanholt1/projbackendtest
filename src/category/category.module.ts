@@ -4,6 +4,7 @@ import { CategoryController } from './category.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from './schemas/category.schema';
 import { ItemModule } from 'src/item/item.module';
+import { StoreModule } from '../store/store.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ItemModule } from 'src/item/item.module';
       { name: Category.name, schema: CategorySchema },
     ]),
     forwardRef(() => ItemModule),
+    StoreModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],
