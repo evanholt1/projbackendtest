@@ -50,7 +50,7 @@ export class OrderService {
           this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
       })
       .populate({
-        path: 'items',
+        path: 'items.item',
         model: 'Item',
         select: this.itemService.projectByLang(language, false),
       })
