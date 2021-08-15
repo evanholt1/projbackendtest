@@ -12,7 +12,6 @@ import { StoreModule } from '../store/store.module';
       { name: Category.name, schema: CategorySchema },
     ]),
     forwardRef(() => ItemModule),
-    StoreModule,
   ],
   controllers: [CategoryController],
   providers: [CategoryService],

@@ -8,7 +8,7 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Role } from 'src/utils/enums/role.enum';
@@ -16,9 +16,7 @@ import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Language } from '../utils/enums/languages.enum';
-import { PaginationOptions } from '../utils/classes/paginate-options.class';
-import { PaginationOptionsDecorator } from '../utils/decorators/pagination-options.decorator';
-import { StoreType } from '../utils/enums/store-type.enum';
+import { idInput } from '../utils/classes/idInput.class';
 
 @Controller('category')
 @ApiTags('Category')
@@ -33,67 +31,62 @@ export class CategoryController {
     return this.categoryService.create(createCategoryDto);
   }
 
-  // @Public()
-  // @Get('/localize')
-  // localize() {
-  //   return this.categoryService.localize();
-  // }
-
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
   @ApiQuery({ name: 'language', enum: Language, required: false })
-  @ApiQuery({ name: 'storeType', enum: StoreType, required: false })
-  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
+  //@PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
   findAll(
     @Query('language') language: Language,
-    @Query('paginationOptions') paginationOptions: PaginationOptions,
-    @Query('storeType') storeType: StoreType,
+    //@Query('paginationOptions') paginationOptions: PaginationOptions,
   ) {
-    return this.categoryService.findAll(language, paginationOptions, storeType);
+    return this.categoryService.findAll(language);
+  }
+
+  @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
+  @Get('/withItems')
+  findWithItems(@Query('language') language: Language) {
+    return this.categoryService.findWithItems(language);
   }
 
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoryService.findOne(id);
+  findOne(@Param() idInput: idInput) {
+    return this.categoryService.findOne(idInput.id);
+  }
+
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
+  @Patch(':id')
+  update(
+    @Param() idInput: idInput,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
+    return this.categoryService.update(idInput.id, updateCategoryDto);
+  }
+
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
+  @Delete(':id')
+  remove(@Param() idInput: idInput) {
+    return this.categoryService.remove(idInput.id);
   }
 
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
   @ApiQuery({ name: 'language', enum: Language, required: false })
-  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get(':id/items')
   findOneCatItems(
-    @Param('id') id: string,
+    @Param() idInput: idInput,
     @Query('language') language: Language,
-    @Query('paginationOptions') paginationOptions: PaginationOptions,
   ) {
-    return this.categoryService.findOneCatItems(
-      id,
-      language,
-      paginationOptions,
-    );
-  }
-
-  @Roles(Role.All)
-  @ApiBearerAuth()
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoryService.update(id, updateCategoryDto);
-  }
-
-  @Roles(Role.All)
-  @ApiBearerAuth()
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(id);
+    return this.categoryService.findOneCatItems(idInput.id, language);
   }
 }

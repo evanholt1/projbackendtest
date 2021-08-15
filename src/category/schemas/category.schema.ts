@@ -11,12 +11,6 @@ export class Category {
   @ApiProperty({ type: String })
   _id: mongoose.Schema.Types.ObjectId;
 
-  // @Prop()
-  // name_en: string;
-  //
-  // @Prop()
-  // name_ar: string;
-
   @Prop()
   name: LocalizedText;
 
