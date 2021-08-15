@@ -33,44 +33,36 @@ export class ItemController {
     return this.itemService.create(createItemDto);
   }
 
-  // @Public()
-  // @Get('/localize')
-  // localize() {
-  //   return this.itemService.localize();
-  // }
-
   // @Roles(Role.All)
   // @ApiBearerAuth()
   @Public()
   @ApiQuery({ name: 'language', enum: Language, required: false })
-  @PaginationOptionsDecorator('paginationOptions', PaginationOptions)
   @Get()
-  findAll(
-    @Query('language') language: Language,
-    @Query('paginationOptions') paginationOptions: PaginationOptions,
-  ): Promise<Item[]> {
-    return this.itemService.findAll(language, paginationOptions);
+  findAll(@Query('language') language: Language): Promise<Item[]> {
+    return this.itemService.findAll(language);
   }
 
-  @Public()
-  @ApiQuery({ name: 'language', enum: Language, required: false })
-  @Get('storeItemsByCat/:storeId')
-  findStoreItemsByCat(
-    @Query('language') language: Language,
-    @Param('storeId') storeId: string,
-  ) {
-    return this.itemService.findStoreItemsByCat(language, storeId);
-  }
+  // @Public()
+  // @ApiQuery({ name: 'language', enum: Language, required: false })
+  // @Get('storeItemsByCat/:storeId')
+  // findStoreItemsByCat(
+  //   @Query('language') language: Language,
+  //   @Param('storeId') storeId: string,
+  // ) {
+  //   return this.itemService.findStoreItemsByCat(language, storeId);
+  // }
   // @Roles(Role.All)
   // @ApiBearerAuth()
+
   @Public()
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Item> {
     return this.itemService.findOne(id);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -79,8 +71,9 @@ export class ItemController {
     return this.itemService.update(id, updateItemDto);
   }
 
-  @Roles(Role.All)
-  @ApiBearerAuth()
+  // @Roles(Role.All)
+  // @ApiBearerAuth()
+  @Public()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.itemService.remove(id);

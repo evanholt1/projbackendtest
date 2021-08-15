@@ -5,12 +5,6 @@ import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
 //@Schema()
 export class AddonCategory {
-  // @Prop()
-  // name_en: string;
-  //
-  // @Prop()
-  // name_ar: string;
-
   @ApiProperty({ name: 'name', type: Object })
   @Prop()
   name: LocalizedText;
@@ -18,7 +12,9 @@ export class AddonCategory {
   @Prop()
   min_selection: number;
 
-  @Prop()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  @Prop({ validate: (val) => (!this.options ? 0 : val <= this.options.length) })
   max_selection: number;
 
   @Prop([AddonOption])

@@ -1,42 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Schema as schema, Document } from 'mongoose';
 import { Category } from 'src/category/schemas/category.schema';
-import { Store } from 'src/store/schemas/store.schema';
 import { AddonCategory } from './addonCategory.schema';
 import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
 export type ItemDocument = Item & Document;
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, validateBeforeSave: true })
 export class Item {
   @ApiProperty({ type: String })
   _id: schema.Types.ObjectId;
-
-  // @ApiProperty()
-  // @Prop()
-  // name_en: string;
-  //
-  // @Prop()
-  // name_ar: string;
 
   @ApiProperty({ name: 'name', type: Object })
   @Prop()
   name: LocalizedText;
 
   @Prop()
-  base_price: number;
-
-  @Prop()
-  display_price: number;
+  price: number;
 
   @Prop({ default: 0, min: 0, max: 100 })
-  price_discount_percentage: number;
-  // @Prop()
-  // description_en: string;
-  //
-  // @Prop()
-  // description_ar: string;
+  discountValue: number;
 
   @ApiProperty({ name: 'description', type: Object })
   @Prop()
@@ -46,17 +30,13 @@ export class Item {
   image_url: string;
 
   @ApiProperty({ type: String })
-  @Prop({ type: schema.Types.ObjectId, ref: 'Store' })
-  store: Store;
-
-  @ApiProperty({ type: String })
   @Prop({ type: schema.Types.ObjectId, ref: 'Category' })
   category: Category;
 
   @Prop([AddonCategory])
   addonsByCat: AddonCategory[];
 
-  @Prop()
+  @Prop({ min: 0, default: 0 })
   salesCount: number;
 }
 
