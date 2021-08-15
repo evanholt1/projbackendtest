@@ -36,6 +36,9 @@ export class User {
 
   @Prop({ default: [] })
   savedAddresses: Point[];
+
+  @Prop()
+  fcmToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
