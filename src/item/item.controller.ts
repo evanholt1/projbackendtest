@@ -11,7 +11,7 @@ import {
 import { ItemService } from './item.service';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
-import { Item } from './schemas/item.schema';
+import { Item, ItemDocument } from './schemas/item.schema';
 import { Roles } from 'src/user/decorators/roles.decorator';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/utils/enums/role.enum';
@@ -19,6 +19,7 @@ import { Public } from 'src/utils/decorators/public-route.decorator';
 import { Language } from '../utils/enums/languages.enum';
 import { PaginationOptionsDecorator } from '../utils/decorators/pagination-options.decorator';
 import { PaginationOptions } from '../utils/classes/paginate-options.class';
+import { LeanDocument } from 'mongoose';
 
 @Controller('item')
 @ApiTags('Item')
@@ -38,7 +39,9 @@ export class ItemController {
   @Public()
   @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get()
-  findAll(@Query('language') language: Language): Promise<Item[]> {
+  findAll(
+    @Query('language') language: Language,
+  ): Promise<LeanDocument<ItemDocument>[]> {
     return this.itemService.findAll(language);
   }
 
@@ -56,7 +59,7 @@ export class ItemController {
 
   @Public()
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Item> {
+  findOne(@Param('id') id: string): Promise<LeanDocument<Item>> {
     return this.itemService.findOne(id);
   }
 

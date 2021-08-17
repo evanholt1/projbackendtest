@@ -13,6 +13,8 @@ import { Connection } from 'mongoose';
 import { LandingCardModule } from './landing-card/landing-card.module';
 import { SocketModule } from './socket/socket.module';
 import { OfferModule } from './offer/offer.module';
+import * as paginatePlugin from 'mongoose-paginate-v2';
+import * as aggregatePaginatePlugin from 'mongoose-aggregate-paginate-v2';
 
 @Module({
   imports: [
@@ -27,9 +29,9 @@ import { OfferModule } from './offer/offer.module';
         useNewUrlParser: true,
         connectionFactory: (connection) => {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
-          connection.plugin(require('mongoose-paginate-v2'));
+          connection.plugin(paginatePlugin);
           // eslint-disable-next-line @typescript-eslint/no-var-requires
-          connection.plugin(require('mongoose-aggregate-paginate-v2'));
+          connection.plugin(aggregatePaginatePlugin);
           return connection;
         },
       }),

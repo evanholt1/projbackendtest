@@ -1,14 +1,14 @@
 import { Prop } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Item } from '../../item/schemas/item.schema';
-import { AddonCategory } from '../../item/schemas/addonCategory.schema';
 import { SelectedAddonCategory } from './selected-addon-category.schema';
+import { SchemaTypes, Types } from 'mongoose';
+import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
 export class OrderItem {
   @ApiProperty({ type: String })
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Item' })
-  item: Item;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Item' })
+  item: Types.ObjectId;
 
   @Prop()
   @ApiProperty()
@@ -22,5 +22,10 @@ export class OrderItem {
   @ApiProperty()
   totalSingleItemPrice: number;
 
+  @ApiHideProperty()
+  @Prop()
+  name: LocalizedText;
+
+  @Prop()
   selectedAddonCats: SelectedAddonCategory[];
 }

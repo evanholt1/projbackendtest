@@ -17,44 +17,88 @@ export class OrderService {
     private readonly orderModel: mongoose.Model<OrderDocument>,
     @InjectModel(Item.name)
     private readonly itemModel: mongoose.Model<ItemDocument>,
-    private storeService: StoreService,
     private itemService: ItemService,
   ) {}
 
+  // weirdly done so order can be it's own full entity with names and such.
   async create(createOrderDto: CreateOrderDto) {
+    const ids = createOrderDto.items.map((item) => item.item);
+
     const items = await this.itemModel
-      .find({ id: { $in: createOrderDto.items } })
+      //@ts-ignore
+      .find({ _id: { $in: ids } })
       .exec();
+
+    const itemIdToNameMap = {};
+    const addonCatIdToNameMap = {};
+    const addonOptIdToNameMap = {};
+    items.forEach((item) => {
+      itemIdToNameMap[item._id] = item.name;
+      item.addonsByCat.forEach((cat) => {
+        addonCatIdToNameMap[cat._id.toString()] = cat.name;
+        cat.options.forEach((opt) => {
+          addonOptIdToNameMap[opt._id.toString()] = opt.name;
+        });
+      });
+    });
+
+    createOrderDto.items.forEach((item) => {
+      item.name = itemIdToNameMap[item.item.toString()];
+      item.selectedAddonCats.forEach((cat) => {
+        cat.name = addonCatIdToNameMap[cat._id.toString()];
+        cat.selectedOptions.forEach((opt) => {
+          opt.name = addonOptIdToNameMap[opt._id.toString()];
+        });
+      });
+    });
+
     const itemUpdates = items.map((item) => {
       item.salesCount++;
       return item.save();
     });
-    return Promise.all([itemUpdates, this.orderModel.create(createOrderDto)]);
+
+    const p = (await Promise.all([
+      itemUpdates,
+      this.orderModel.create(createOrderDto),
+    ])) as any;
+
+    return p[1];
   }
 
-  findAll() {
+  findAll(language: Language) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    return this.orderModel.paginate({}, { populate: 'items' });
+    return this.orderModel.find(
+      {},
+      this.itemService.projectOrderItemsByLang(language),
+    );
+    // .populate({
+    //   path: 'items.item',
+    //   //select: this.itemService.projectByLang(language),
+    // })
+    // .populate('items.selectedAddonCats._id')
+    // .populate('items.selectedAddonCats.selectedOptions._id');
   }
 
   findOne(id: string, language: Language) {
     if (!mongoose.isValidObjectId(id))
       throw new HttpException('Invalid ObjectId', HttpStatus.BAD_REQUEST);
 
-    return this.orderModel
-      .findById(id)
-      .populate({
-        path: 'store',
-        select:
-          this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
-      })
-      .populate({
-        path: 'items.item',
-        model: 'Item',
-        select: this.itemService.projectByLang(language, false),
-      })
-      .exec();
+    return (
+      this.orderModel
+        .findById(id)
+        // .populate({
+        //   path: 'store',
+        //   select:
+        //     this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
+        // })
+        .populate({
+          path: 'items.item',
+          model: 'Item',
+          select: this.itemService.projectByLang(language),
+        })
+        .exec()
+    );
   }
 
   findUserOrders(userId: string, language: Language) {
@@ -62,14 +106,14 @@ export class OrderService {
       this.orderModel
         .find({ user: Types.ObjectId(userId) } as FilterQuery<Order>)
         //.populate('store')
-        .populate({
-          path: 'store',
-          select:
-            this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
-        })
+        // .populate({
+        //   path: 'store',
+        //   select:
+        //     this.storeService.keepOnlyLocaleSpecificFieldsInSelection(language),
+        // })
         .populate({
           path: 'items.item',
-          select: this.itemService.projectByLang(language, false),
+          select: this.itemService.projectByLang(language),
         })
         .exec()
     );

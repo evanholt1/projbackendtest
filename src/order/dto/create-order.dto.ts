@@ -11,13 +11,9 @@ export class CreateOrderDto {
   user: User;
 
   //@ApiProperty({ type: [String], isArray: true })
-  // @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }])
   items: OrderItem[];
 
   totalPrice: number;
 
   totalQuantity: number;
-
-  @ApiProperty({ type: String })
-  store: Store;
 }

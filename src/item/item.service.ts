@@ -12,6 +12,7 @@ import { Item, ItemDocument } from './schemas/item.schema';
 import * as mongoose from 'mongoose';
 import { Language } from '../utils/enums/languages.enum';
 import { CategoryService } from '../category/category.service';
+import { LeanDocument } from 'mongoose';
 @Injectable()
 export class ItemService {
   constructor(
@@ -21,10 +22,20 @@ export class ItemService {
     private categoryService: CategoryService,
   ) {}
   create(createItemDto: CreateItemDto): Promise<Item> {
+    if (createItemDto.addonsByCat) {
+      for (let i = 0, len = createItemDto.addonsByCat.length; i < len; i++) {
+        const cat = createItemDto.addonsByCat[i];
+        if (cat.max_selection > cat.options.length)
+          throw new HttpException(
+            "Max Can't be Greater than options count",
+            HttpStatus.BAD_REQUEST,
+          );
+      }
+    }
     return this.itemModel.create(createItemDto);
   }
 
-  findAll(language: Language): Promise<Item[]> {
+  findAll(language: Language): Promise<LeanDocument<ItemDocument>[]> {
     return this.itemModel.find({}, this.projectByLang(language)).lean().exec();
   }
 
@@ -53,7 +64,7 @@ export class ItemService {
   //   ]);
   // }
 
-  findOne(id: string): Promise<Item> {
+  findOne(id: string): Promise<LeanDocument<Item>> {
     return this.itemModel.findById(id).lean().exec();
   }
 
@@ -69,6 +80,27 @@ export class ItemService {
 
   remove(id: string) {
     return this.itemModel.deleteOne({ _id: id }).exec();
+  }
+
+  projectOrderItemsByLang(language: Language) {
+    const arFieldsRemoved = {
+      'items.name.ar': 0,
+      'items.description.ar': 0,
+      'items.selectedAddonCats.name.ar': 0,
+      'items.selectedAddonCats.selectedOptions.name.ar': 0,
+    };
+
+    const enFieldsRemoved = {
+      'items.name.en': 0,
+      'items.description.en': 0,
+      'items.selectedAddonCats.name.en': 0,
+      'items.selectedAddonCats.selectedOptions.name.en': 0,
+    };
+
+    return {
+      ...(language === Language.en ? arFieldsRemoved : {}),
+      ...(language === Language.ar ? enFieldsRemoved : {}),
+    };
   }
 
   projectCategoryItemsByLang(language: Language) {

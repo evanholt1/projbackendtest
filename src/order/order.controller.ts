@@ -31,9 +31,10 @@ export class OrderController {
   }
 
   @Public()
+  @ApiQuery({ name: 'language', enum: Language, required: false })
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  findAll(@Query('language') language: Language) {
+    return this.orderService.findAll(language);
   }
 
   @Public()

@@ -18,9 +18,9 @@ import { Item, ItemDocument } from '../item/schemas/item.schema';
 export class CategoryService {
   constructor(
     @InjectModel(Category.name)
-    private categoryModel: mongoose.PaginateModel<CategoryDocument>,
+    private categoryModel: mongoose.Model<CategoryDocument>,
     @InjectModel(Item.name)
-    private readonly ItemModel: mongoose.Model<ItemDocument>,
+    private ItemModel: mongoose.Model<ItemDocument>,
     @Inject(forwardRef(() => ItemService))
     private itemService: ItemService,
   ) {}

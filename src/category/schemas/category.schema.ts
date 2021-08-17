@@ -1,15 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Item } from 'src/item/schemas/item.schema';
 import { LocalizedText } from '../../utils/schemas/localized-text.schema';
 
-export type CategoryDocument = Category & mongoose.Document;
+export type CategoryDocument = Category & Document;
 
-@Schema({ timestamps: true })
-export class Category {
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
+export class Category extends Document {
   @ApiProperty({ type: String })
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: MongooseSchema.Types.ObjectId;
 
   @Prop()
   name: LocalizedText;
@@ -19,3 +23,10 @@ export class Category {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
+
+// will not work. f nest
+CategorySchema.virtual('items', {
+  ref: 'items',
+  localField: '_id',
+  foreignField: 'category',
+});

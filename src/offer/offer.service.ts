@@ -67,7 +67,7 @@ export class OfferService {
         .then((items) =>
           Promise.all(
             items.map((item: ItemDocument) => {
-              item.price_discount_percentage = createOfferDto.discountValue;
+              item.discountValue = createOfferDto.discountValue;
               return item.save();
             }),
           ),
@@ -82,7 +82,7 @@ export class OfferService {
         .then((items) =>
           Promise.all(
             items.map((item: ItemDocument) => {
-              item.price_discount_percentage = createOfferDto.discountValue;
+              item.discountValue = createOfferDto.discountValue;
               return item.save();
             }),
           ),

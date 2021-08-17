@@ -1,30 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import * as mongoose from 'mongoose';
-import { Item } from 'src/item/schemas/item.schema';
 import { User } from 'src/user/schemas/user.schema';
-import { Store } from '../../store/schemas/store.schema';
 import { OrderItem } from './order-item.schema';
+import { Schema as MongooseSchema, SchemaTypes, Types } from 'mongoose';
 
 export type OrderDocument = Order & Document;
 
 @Schema({ timestamps: true })
 export class Order {
   @ApiProperty({ type: String })
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: MongooseSchema.Types.ObjectId;
 
   @ApiProperty({ type: String })
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  user: User;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'User' })
+  user: Types.ObjectId;
 
   // @ApiProperty({ type: [String], isArray: true })
   // @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }])
   // items: Item[];
+  @Prop()
   items: OrderItem[];
-
-  @ApiProperty({ type: String })
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Store' })
-  store: Store;
 
   @Prop()
   totalPrice: number;
@@ -58,7 +53,7 @@ export class Order {
   @Prop({ default: false })
   reviewed: boolean;
 
-  @Prop({ min: 0.0, max: 5.0, default: 0.0 })
+  @Prop({ min: 0.0, max: 5.0 })
   review: number;
 }
 
